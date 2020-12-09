@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule
+	xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties"
+	xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
+	xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns:salesforce-composite="http://www.mulesoft.org/schema/mule/salesforce-composite"
+	xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd 
+http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/salesforce-composite http://www.mulesoft.org/schema/mule/salesforce-composite/current/mule-salesforce-composite.xsd 
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd">
+
+
+	<http:listener-config name="mico-composite-order-sapi-httpListenerConfig">
+		<http:listener-connection
+			host="0.0.0.0"
+			port="8081" />
+	</http:listener-config>
+
+
+	<apikit:config
+		name="mico-composite-order-sapi-config"
+		api="resource::cd8b296d-8848-4a91-98ed-4a47f73703bd:composite-order-sapi:1.0.4:raml:zip:mico-composite-order-sapi.raml"
+		outboundHeadersMapName="outboundHeaders"
+		httpStatusVarName="httpStatus" />
+		
+	<global-property
+		doc:name="Global Property"
+		doc:id="5b8ceccf-0381-4a42-a708-22d1724db64e"
+		name="env"
+		value="dev" />
+		
+	<configuration-properties
+		doc:name="Configuration properties"
+		doc:id="78d1b1df-d4c6-4689-8df8-0241a640a56f"
+		file="properties-${env}.yaml" />
+		
+	<salesforce-composite:composite-config
+		name="Salesforce_Composite_Config"
+		doc:name="Salesforce Composite Config"
+		doc:id="39845566-a0fb-4107-9aea-6ab6b75a2de2">
+		<salesforce-composite:oauth-user-pass-connection
+			consumerKey="${secure::sf.key}"
+			consumerSecret="${secure::sf.secret}"
+			username="${secure::sf.username}"
+			password="${secure::sf.password}"
+			securityToken="${secure::sf.token}" />
+	</salesforce-composite:composite-config>
+
+	<salesforce:sfdc-config
+		name="Salesforce_Config"
+		doc:name="Salesforce Config"
+		doc:id="2fda4bb4-0cf1-48da-8d42-c48ad07c43b9">
+		<salesforce:oauth-user-pass-connection
+			consumerKey="${secure::sf.key}"
+			consumerSecret="${secure::sf.secret}"
+			username="${secure::sf.username}"
+			password="${secure::sf.password}"
+			securityToken="${secure::sf.token}" />
+	</salesforce:sfdc-config>
+
+
+	<validation:config
+		name="Validation_Config"
+		doc:name="Validation Config"
+		doc:id="9f2ef678-a076-46cb-b041-38fcae203df3" />
+		
+		
+	<secure-properties:config
+		name="Secure_Properties_Config"
+		doc:name="Secure Properties Config"
+		doc:id="d6b1d73f-c1b5-4255-a02d-6e078eb97eaa"
+		file="secure-properties-${env}.yaml"
+		key="${encrypt-key}">
+		<secure-properties:encrypt algorithm="Blowfish" />
+	</secure-properties:config>
+	<configuration-properties doc:name="Configuration properties" doc:id="844023f6-bd2b-4023-93f7-61202d052f5d" file="properties.yaml" />
+
+</mule>

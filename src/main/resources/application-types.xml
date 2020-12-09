@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="Order" format="json">
+      <types:shape format="weave" example="examples/sample-order.json"><![CDATA[%dw 2.0
+
+type Order = {|
+  orderData: {|
+    poNumber: Number {"typeId": "int"}, 
+    signatureRequiredFlag: Boolean, 
+    shipInstructions: String, 
+    giftWrapFlag: Boolean, 
+    giftWrapMessage: String, 
+    currencyCode: String, 
+    subTotal: Number {"typeId": "double"}
+  |}, 
+  items: Array<{|    id: Number {"typeId": "int"},     category: String,     quantity: Number {"typeId": "int"},     size: String  |}>
+|} {"example": "{\\\"orderData\\\":{\\\"poNumber\\\":123473,\\\"signatureRequiredFlag\\\":false,\\\"shipInstructions\\\":\\\"Dont break it\\\",\\\"giftWrapFlag\\\":true,\\\"giftWrapMessage\\\":\\\"You rock!\\\",\\\"currencyCode\\\":\\\"USD\\\",\\\"subTotal\\\":41.5},\\\"items\\\":[{\\\"id\\\":12345,\\\"category\\\":\\\"T-Shirt\\\",\\\"quantity\\\":4,\\\"size\\\":\\\"M\\\"},{\\\"id\\\":34567,\\\"category\\\":\\\"Hoodie\\\",\\\"quantity\\\":2,\\\"size\\\":\\\"M\\\"}]}"}
+
+]]></types:shape>
+    </types:type>
+    <types:type name="Items" format="java">
+      <types:shape format="raml"><![CDATA[#%RAML 1.0 DataType
+type: string]]></types:shape>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#f35b1cb5-c2b3-4723-9e4d-10739c3da391">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="Order"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+</types:mule>

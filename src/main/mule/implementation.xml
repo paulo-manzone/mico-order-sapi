@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:validation="http://www.mulesoft.org/schema/mule/validation" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns:salesforce-composite="http://www.mulesoft.org/schema/mule/salesforce-composite"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/salesforce-composite http://www.mulesoft.org/schema/mule/salesforce-composite/current/mule-salesforce-composite.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd">
+	
+	
+	<flow name="postOrders" doc:id="330715d5-4129-406b-a445-fc883e0d68a1" >
+		<ee:transform doc:name="Transform Message" doc:id="f35b1cb5-c2b3-4723-9e4d-10739c3da391" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+
+fun items(payload)=
+	payload map(item, index)->{
+		"method": "POST",
+		"url": "/services/data/v49.0/sobjects/Item__c",
+		"referenceId": "item" ++ index,
+		"body": {
+			"ItemId__c": item.id,
+			"Category__c": item.category,
+			"Quantity__c": item.quantity,
+			"Size__c": item.size,
+			"Order__c": "@{Order.id}"
+			
+			
+			
+			
+			
+		}
+		
+	}
+---
+{
+	"allOrNone": true,
+	"compositeRequest": [
+		{
+			"method": "POST",
+			"url": "/services/data/v49.0/sobjects/Order__c",
+			"referenceId":"Order",
+			"body": {
+				"PoNumber__c": payload.orderData.poNumber,
+			 	"SignatureRequired__c": payload.orderData.signatureRequiredFlag,
+			 	"ShipInstructions__c": payload.orderData.shipInstructions,
+			 	"GiftWrapFlag__c": payload.orderData.giftWrapFlag,
+			 	"GiftWrapMessage__c": payload.orderData.giftWrapMessage,
+			 	"CurrencyCode__c": payload.orderData.currencyCode,
+			 	"SubTotal__c": payload.orderData.subTotal
+			}
+		}] 
+		++
+		items(payload.items)
+}
+
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<salesforce-composite:execute-composite-request doc:name="Execute composite request" doc:id="a01d9241-0d56-4b81-b5d2-dfec5dd29aba" config-ref="Salesforce_Composite_Config"/>
+		<logger level="INFO" doc:name="Logger" doc:id="4bbbcf78-2fcc-4a4c-908d-3010592d67bc" message="#[payload]"/>
+		<validation:is-true doc:name="Is true" doc:id="86d76806-d866-49d4-88ce-e7e1d41c09e0" config-ref="Validation_Config" expression="#[payload.compositeResponse[0].httpStatusCode == 201]">
+			<error-mapping sourceType="VALIDATION:INVALID_BOOLEAN" targetType="APP:DUPLICATE_ENTRY" />
+		</validation:is-true>
+		<ee:transform doc:name="Transform Message" doc:id="a94e71bc-5314-4735-93bb-f93f98bbab06">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"orderId": payload.compositeResponse[0].body.id
+}]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="outboundHeaders" ><![CDATA[{
+	"Location": "/orders/" ++ payload.compositeResponse[0].body.id
+}]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+	</flow>
+	<flow name="getOrders" doc:id="c33b7549-4cff-4f0f-90b0-477395a38111" >
+		<set-variable value="#[[]]" doc:name="Set Acumulador" doc:id="349a68a3-2d96-4077-ac32-081980949522" variableName="acumulador"/>
+		<salesforce:query doc:name="Query Order" doc:id="50a1300e-d4cb-43a8-bd6b-ebbd4fda748b" config-ref="Salesforce_Config">
+			<salesforce:salesforce-query ><![CDATA[SELECT 	Id, PoNumber__c, SignatureRequired__c, ShipInstructions__c,
+		GiftWrapFlag__c, GiftWrapMessage__c,
+	 	CurrencyCode__c, SubTotal__c FROM Order__c 
+	 	WHERE PoNumber__c > :initial AND PoNumber__c < :final]]></salesforce:salesforce-query>
+			<salesforce:parameters ><![CDATA[#[output application/java
+---
+{
+	"initial" : attributes.queryParams.'initialId' as Number,
+	"final" : attributes.queryParams.'finalId' as Number
+}]]]></salesforce:parameters>
+		</salesforce:query>
+		<validation:is-not-empty-collection doc:name="Is not empty collection" doc:id="89d92a35-c463-49b8-a90c-7bb415c58af7" config-ref="Validation_Config" message="Order not  found!">
+			<error-mapping sourceType="VALIDATION:EMPTY_COLLECTION" targetType="APP:NOT_FOUND" />
+		</validation:is-not-empty-collection>
+		<foreach doc:name="For Each" doc:id="cc497fa1-e189-4ed5-b507-cc4b8778456f" >
+			<set-variable value="#[payload]" doc:name="Set Order" doc:id="203cd7fa-a4b8-4793-b2ac-c9c1746edcdd" variableName="order"/>
+			<salesforce:query doc:name="Query " doc:id="df6f218d-fc12-4ffa-8e85-64ff1034a839" config-ref="Salesforce_Config">
+			<salesforce:salesforce-query><![CDATA[SELECT ItemId__c, Category__c, Quantity__c, Size__c FROM Item__c WHERE Order__c = ':id']]></salesforce:salesforce-query>
+			<salesforce:parameters><![CDATA[#[output application/json
+---
+{
+	"id" : payload.Id
+}]]]></salesforce:parameters>
+		</salesforce:query>
+			<ee:transform doc:name="Transform Message" doc:id="8e33a4cf-da12-44b1-9e83-cc1f062642e0" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="acumulador" ><![CDATA[%dw 2.0
+output application/java
+---
+vars.acumulador + {
+	orderData: vars.order,
+	items: 
+		payload map () -> {
+			id: $.ItemId__c,
+			category: $.Category__c,
+			quantity:$.Quantity__c,
+			size: $.Size__c
+		}
+}]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+		</foreach>
+		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+vars.acumulador
+
+]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+	</flow>
+</mule>
