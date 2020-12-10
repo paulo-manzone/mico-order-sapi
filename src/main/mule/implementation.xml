@@ -28,9 +28,6 @@ fun items(payload)=
 			"Order__c": "@{Order.id}"
 			
 			
-			
-			
-			
 		}
 		
 	}
@@ -60,7 +57,6 @@ fun items(payload)=
 			</ee:message>
 		</ee:transform>
 		<salesforce-composite:execute-composite-request doc:name="Execute composite request" doc:id="a01d9241-0d56-4b81-b5d2-dfec5dd29aba" config-ref="Salesforce_Composite_Config"/>
-		<logger level="INFO" doc:name="Logger" doc:id="4bbbcf78-2fcc-4a4c-908d-3010592d67bc" message="#[payload]"/>
 		<validation:is-true doc:name="Is true" doc:id="86d76806-d866-49d4-88ce-e7e1d41c09e0" config-ref="Validation_Config" expression="#[payload.compositeResponse[0].httpStatusCode == 201]">
 			<error-mapping sourceType="VALIDATION:INVALID_BOOLEAN" targetType="APP:DUPLICATE_ENTRY" />
 		</validation:is-true>
