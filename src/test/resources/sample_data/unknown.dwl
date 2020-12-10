@@ -6,8 +6,7 @@
     "giftWrapFlag": true,
     "giftWrapMessage": "You rock!",
     "currencyCode": "USD",
-    "subTotal": 41.5,
-    "customerSalesforceId":"sasda324jh234"
+    "subTotal": 41.5
   },
   "items": [
     {

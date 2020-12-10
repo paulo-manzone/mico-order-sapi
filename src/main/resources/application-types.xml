@@ -12,16 +12,50 @@ type Order = {|
     giftWrapFlag: Boolean, 
     giftWrapMessage: String, 
     currencyCode: String, 
-    subTotal: Number {"typeId": "double"}
+    subTotal: Number {"typeId": "double"}, 
+    customerSalesforceId: String
   |}, 
   items: Array<{|    id: Number {"typeId": "int"},     category: String,     quantity: Number {"typeId": "int"},     size: String  |}>
-|} {"example": "{\\\"orderData\\\":{\\\"poNumber\\\":123473,\\\"signatureRequiredFlag\\\":false,\\\"shipInstructions\\\":\\\"Dont break it\\\",\\\"giftWrapFlag\\\":true,\\\"giftWrapMessage\\\":\\\"You rock!\\\",\\\"currencyCode\\\":\\\"USD\\\",\\\"subTotal\\\":41.5},\\\"items\\\":[{\\\"id\\\":12345,\\\"category\\\":\\\"T-Shirt\\\",\\\"quantity\\\":4,\\\"size\\\":\\\"M\\\"},{\\\"id\\\":34567,\\\"category\\\":\\\"Hoodie\\\",\\\"quantity\\\":2,\\\"size\\\":\\\"M\\\"}]}"}
+|} {"example": "{\\\"orderData\\\":{\\\"poNumber\\\":123473,\\\"signatureRequiredFlag\\\":false,\\\"shipInstructions\\\":\\\"Dont break it\\\",\\\"giftWrapFlag\\\":true,\\\"giftWrapMessage\\\":\\\"You rock!\\\",\\\"currencyCode\\\":\\\"USD\\\",\\\"subTotal\\\":41.5,\\\"customerSalesforceId\\\":\\\"sasda324jh234\\\"},\\\"items\\\":[{\\\"id\\\":12345,\\\"category\\\":\\\"T-Shirt\\\",\\\"quantity\\\":4,\\\"size\\\":\\\"M\\\"},{\\\"id\\\":34567,\\\"category\\\":\\\"Hoodie\\\",\\\"quantity\\\":2,\\\"size\\\":\\\"M\\\"}]}"}
 
 ]]></types:shape>
     </types:type>
     <types:type name="Items" format="java">
       <types:shape format="raml"><![CDATA[#%RAML 1.0 DataType
 type: string]]></types:shape>
+    </types:type>
+    <types:type name="OrderSf" format="json">
+      <types:shape format="weave" example="examples/sample-orderSf.json"><![CDATA[%dw 2.0
+
+type OrderSf = {|
+  Id: Number {"typeId": "int"}, 
+  PoNumber__c: Number {"typeId": "int"}, 
+  SignatureRequired__c: Boolean, 
+  ShipInstructions__c: String, 
+  GiftWrapFlag__c: Boolean, 
+  GiftWrapMessage__c: String, 
+  CurrencyCode__c: String, 
+  SubTotal__c: Number {"typeId": "double"}, 
+  Customer__c: String
+|} {"example": "{\\\"Id\\\":21312,\\\"PoNumber__c\\\":1232131,\\\"SignatureRequired__c\\\":false,\\\"ShipInstructions__c\\\":\\\"dont break it!\\\",\\\"GiftWrapFlag__c\\\":true,\\\"GiftWrapMessage__c\\\":\\\"abc123\\\",\\\"CurrencyCode__c\\\":\\\"USD\\\",\\\"SubTotal__c\\\":13.4,\\\"Customer__c\\\":\\\"adasdas312312\\\"}"}
+
+]]></types:shape>
+    </types:type>
+    <types:type name="OrderData" format="json">
+      <types:shape format="weave" example="examples/orderData.json"><![CDATA[%dw 2.0
+
+type OrderData = {|
+  poNumber: Number {"typeId": "int"}, 
+  signatureRequiredFlag: Boolean, 
+  shipInstructions: String, 
+  giftWrapFlag: Boolean, 
+  giftWrapMessage: String, 
+  currencyCode: String, 
+  subTotal: Number {"typeId": "double"}, 
+  customerId: String
+|} {"example": "{\\\"poNumber\\\":123473,\\\"signatureRequiredFlag\\\":false,\\\"shipInstructions\\\":\\\"Dont break it\\\",\\\"giftWrapFlag\\\":true,\\\"giftWrapMessage\\\":\\\"You rock!\\\",\\\"currencyCode\\\":\\\"USD\\\",\\\"subTotal\\\":41.5,\\\"customerId\\\":\\\"sasda324jh234\\\"}"}
+
+]]></types:shape>
     </types:type>
   </types:catalog>
   <types:enrichment select="#f35b1cb5-c2b3-4723-9e4d-10739c3da391">
@@ -31,6 +65,21 @@ type: string]]></types:shape>
           <types:payload type="Order"/>
         </types:message>
       </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#046ec75d-615b-4264-b69e-62d48dcc8c55"/>
+  <types:enrichment select="#d190f8b3-e66b-4ac8-9113-e09ea4eaf501">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="OrderSf"/>
+        </types:message>
+      </types:input-event>
+      <types:output-event>
+        <types:message>
+          <types:payload type="OrderData"/>
+        </types:message>
+      </types:output-event>
     </types:processor-declaration>
   </types:enrichment>
 </types:mule>

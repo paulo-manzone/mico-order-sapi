@@ -15,7 +15,7 @@
 		
 		<api.groupId>cd8b296d-8848-4a91-98ed-4a47f73703bd</api.groupId>
 		<api.artifactId>composite-order-sapi</api.artifactId>
-		<api.version>1.0.4</api.version>
+		<api.version>1.0.5</api.version>
 		<api.name>mico-composite-order-sapi</api.name>
 		
 		<app.runtime>4.3.0-20200824</app.runtime>
@@ -101,13 +101,6 @@
             <version>1.2.0</version>
             <classifier>mule-plugin</classifier>
         </dependency>
-		<dependency>
-            <groupId>cd8b296d-8848-4a91-98ed-4a47f73703bd</groupId>
-            <artifactId>composite-order-sapi</artifactId>
-            <version>1.0.4</version>
-            <classifier>raml</classifier>
-            <type>zip</type>
-        </dependency>
     	<dependency>
             <groupId>org.mule.modules</groupId>
             <artifactId>mule-apikit-module</artifactId>
@@ -151,6 +144,13 @@
             <version>2.2.5</version>
             <classifier>mule-plugin</classifier>
             <scope>test</scope>
+        </dependency>
+    	<dependency>
+            <groupId>${api.groupId}</groupId>
+            <artifactId>${api.artifactId}</artifactId>
+            <version>${api.version}</version>
+            <classifier>raml</classifier>
+            <type>zip</type>
         </dependency>
     </dependencies>
 
