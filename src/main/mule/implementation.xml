@@ -102,7 +102,7 @@ output application/json
 			<salesforce:salesforce-query ><![CDATA[SELECT 	Id, PoNumber__c, SignatureRequired__c, ShipInstructions__c,
 		GiftWrapFlag__c, GiftWrapMessage__c,
 	 	CurrencyCode__c, SubTotal__c, Customer__c FROM Order__c 
-	 	WHERE PoNumber__c > :initial AND PoNumber__c < :final]]></salesforce:salesforce-query>
+	 	WHERE PoNumber__c >= :initial AND PoNumber__c <= :final]]></salesforce:salesforce-query>
 			<salesforce:parameters ><![CDATA[#[output application/java
 ---
 {

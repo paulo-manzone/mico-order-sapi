@@ -84,6 +84,6 @@ http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/sc
 		<secure-properties:encrypt algorithm="Blowfish" />
 	</secure-properties:config>
 	<configuration-properties doc:name="Configuration properties" doc:id="844023f6-bd2b-4023-93f7-61202d052f5d" file="properties.yaml" />
-	<global-property doc:name="Global Property" doc:id="b7ca86f2-37d0-454a-a158-8123f5cbaa9c" name="encrypt-key"/>
+	<global-property doc:name="Global Property" doc:id="b7ca86f2-37d0-454a-a158-8123f5cbaa9c" name="encrypt-key" value="senha123"/>
 
 </mule>
