@@ -103,17 +103,18 @@ output application/json
 		GiftWrapFlag__c, GiftWrapMessage__c,
 	 	CurrencyCode__c, SubTotal__c, Customer__c FROM Order__c 
 	 	WHERE PoNumber__c >= :initial AND PoNumber__c <= :final]]></salesforce:salesforce-query>
-			<salesforce:parameters ><![CDATA[#[output application/java
+			<salesforce:parameters ><![CDATA[#[output application/json
 ---
 {
-	"initial" : attributes.queryParams.'initialId' as Number,
-	"final" : attributes.queryParams.'finalId' as Number
+	"initial": attributes.queryParams.'initialId' as Number,
+	"final": attributes.queryParams.'finalId' as Number
 }]]]></salesforce:parameters>
 		</salesforce:query>
 		<validation:is-not-empty-collection doc:name="Is not empty collection" doc:id="89d92a35-c463-49b8-a90c-7bb415c58af7" config-ref="Validation_Config" message="Order not  found!">
 			<error-mapping sourceType="VALIDATION:EMPTY_COLLECTION" targetType="APP:NOT_FOUND" />
 		</validation:is-not-empty-collection>
 		<foreach doc:name="For Each" doc:id="cc497fa1-e189-4ed5-b507-cc4b8778456f" >
+			<set-variable value="#[payload.Id]" doc:name="Set id" doc:id="885d3230-a134-401a-8177-0b12106981af" variableName="id"/>
 			<ee:transform doc:name="Transform Message" doc:id="d190f8b3-e66b-4ac8-9113-e09ea4eaf501">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
@@ -132,12 +133,12 @@ output application/java
 			</ee:message>
 		</ee:transform>
 			<set-variable value="#[payload]" doc:name="Set Order" doc:id="203cd7fa-a4b8-4793-b2ac-c9c1746edcdd" variableName="order"/>
-			<salesforce:query doc:name="Query " doc:id="df6f218d-fc12-4ffa-8e85-64ff1034a839" config-ref="Salesforce_Config">
+			<salesforce:query doc:name="Query Items" doc:id="df6f218d-fc12-4ffa-8e85-64ff1034a839" config-ref="Salesforce_Config">
 			<salesforce:salesforce-query><![CDATA[SELECT ItemId__c, Category__c, Quantity__c, Size__c FROM Item__c WHERE Order__c = ':id']]></salesforce:salesforce-query>
 			<salesforce:parameters><![CDATA[#[output application/json
 ---
 {
-	"id" : payload.Id
+	"id" : vars.id
 }]]]></salesforce:parameters>
 		</salesforce:query>
 			<ee:transform doc:name="Transform Message" doc:id="8e33a4cf-da12-44b1-9e83-cc1f062642e0" >
@@ -171,5 +172,6 @@ vars.acumulador
 ]]></ee:set-payload>
             </ee:message>
         </ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="d8cc24ed-7814-4f09-9350-0477459c09aa" message="#[payload]"/>
 	</flow>
 </mule>
