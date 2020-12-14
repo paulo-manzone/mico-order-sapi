@@ -1,1 +1,4 @@
-{"errorMessage":"Server side error!"}
+{
+	"errorMessage": "Server side error!",
+	"description": "Server has thrown an error!"
+}

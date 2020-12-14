@@ -20,7 +20,10 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
-{errorMessage: "Invalid Request!"}]]></ee:set-payload>
+{
+	errorMessage: "Bad request!",
+	description: error.description
+}]]></ee:set-payload>
                     </ee:message>
                     <ee:variables>
                         <ee:set-variable variableName="httpStatus"><![CDATA[400]]></ee:set-variable>
@@ -33,7 +36,10 @@ output application/json
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
-{errorMessage: "Resource not found"}]]></ee:set-payload>
+{
+	errorMessage: "Resource not found",
+	description: error.description
+}]]></ee:set-payload>
                     </ee:message>
                     <ee:variables>
                         <ee:set-variable variableName="httpStatus"><![CDATA[404]]></ee:set-variable>
@@ -46,7 +52,10 @@ output application/json
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
-{errorMessage: "Method not allowed"}]]></ee:set-payload>
+{
+	errorMessage: "Method not allowed",
+	description: error.description
+}]]></ee:set-payload>
                     </ee:message>
                     <ee:variables>
                         <ee:set-variable variableName="httpStatus"><![CDATA[405]]></ee:set-variable>
@@ -59,7 +68,10 @@ output application/json
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
-{errorMessage: "Not acceptable"}]]></ee:set-payload>
+{
+	errorMessage: "Not acceptable",
+	description: error.description
+}]]></ee:set-payload>
                     </ee:message>
                     <ee:variables>
                         <ee:set-variable variableName="httpStatus"><![CDATA[406]]></ee:set-variable>
@@ -72,7 +84,10 @@ output application/json
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
-{errorMessage: "Unsupported media type"}]]></ee:set-payload>
+{
+	errorMessage: "Unsupported media type",
+	description: error.description
+}]]></ee:set-payload>
                     </ee:message>
                     <ee:variables>
                         <ee:set-variable variableName="httpStatus"><![CDATA[415]]></ee:set-variable>
@@ -85,7 +100,10 @@ output application/json
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
-{errorMessage: "Not Implemented"}]]></ee:set-payload>
+{
+	errorMessage: "Not Implemented",
+	description: error.description
+}]]></ee:set-payload>
                     </ee:message>
                     <ee:variables>
                         <ee:set-variable variableName="httpStatus"><![CDATA[501]]></ee:set-variable>
@@ -98,7 +116,11 @@ output application/json
 						<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
 ---
-{errorMessage: "No Orders were found!"}]]></ee:set-payload>
+{
+	errorMessage: "Orders not found!",
+	description: error.description
+}
+]]></ee:set-payload>
 					</ee:message>
 					<ee:variables >
 						<ee:set-variable variableName="httpStatus" ><![CDATA[404]]></ee:set-variable>
@@ -111,7 +133,10 @@ output application/json
 						<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
 ---
-{errorMessage: "Duplicate Entry!"}]]></ee:set-payload>
+{
+	errorMessage: "Duplicate Entry!",
+	description: error.description
+}]]></ee:set-payload>
 					</ee:message>
 					<ee:variables >
 						<ee:set-variable variableName="httpStatus" ><![CDATA[409]]></ee:set-variable>
@@ -119,13 +144,16 @@ output application/json
 					</ee:variables>
 				</ee:transform>
 			</on-error-propagate>
-			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="603afab4-f084-47ef-825f-ae9e04cdc455" type="HTTP:INTERNAL_SERVER_ERROR">
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="603afab4-f084-47ef-825f-ae9e04cdc455" type="HTTP:INTERNAL_SERVER_ERROR, APP:SERVER">
 				<ee:transform doc:name="Transform Message" doc:id="e93c7afd-604e-4a32-917e-5548e13c2678" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" >
 					<ee:message >
 						<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
 ---
-{errorMessage: "Server side error!"}]]></ee:set-payload>
+{
+	errorMessage: "Server side error!",
+	description: error.description
+}]]></ee:set-payload>
 					</ee:message>
 					<ee:variables >
 						<ee:set-variable variableName="httpStatus" ><![CDATA[500]]></ee:set-variable>
@@ -139,7 +167,10 @@ output application/json
 						<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
 ---
-{errorMessage: "Customer does not exist!"}]]></ee:set-payload>
+{
+	errorMessage: "Customer does not exist!",
+	description: error.description
+}]]></ee:set-payload>
 					</ee:message>
 					<ee:variables >
 						<ee:set-variable variableName="httpStatus" ><![CDATA[409]]></ee:set-variable>

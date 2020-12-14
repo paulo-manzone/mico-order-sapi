@@ -13,7 +13,7 @@
 		basePath="/api/v1">
 		<http:request-connection
 			host="localhost"
-			port="8081"
+			port="8083"
 			connectionIdleTimeout="3000000" />
 	</http:request-config>
 	<munit:test
@@ -114,9 +114,6 @@
 			<munit:enable-flow-source value="mico-composite-order-sapi-main" />
 			<munit:enable-flow-source value="post:\orders:application\json:mico-composite-order-sapi-config" />
 		</munit:enable-flow-sources>
-		<munit:behavior>
-			<set-payload value='#[{"batata": 2}]' />
-		</munit:behavior>
 		<munit:execution>
 			<http:request
 				config-ref="HTTP_Request_Configuration"
@@ -165,8 +162,8 @@
 						whereValue="Salesforce_Composite_Config"
 						attributeName="config-ref" />
 				</munit-tools:with-attributes>
-				<munit-tools:then-return>
-					<munit-tools:error typeId="HTTP:INTERNAL_SERVER_ERROR" />
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APP:SERVER" />
 				</munit-tools:then-return>
 			</munit-tools:mock-when>
 		</munit:behavior>
@@ -188,8 +185,11 @@
 				message="The HTTP Status code is not correct!"
 				doc:name="Assert That Status Code is 500" />
 			<munit-tools:assert-that
-				expression="#[output application/java --- payload]"
-				is="#[MunitTools::equalTo(readUrl('classpath://scaffolder/response/post_500_orders_application_json.json','application/json'))]"
+				expression="#[%dw 2.0
+output application/json
+---
+payload.errorMessage]"
+				is='#[MunitTools::equalTo("Server side error!")]'
 				message="The response payload is not correct!"
 				doc:name="Assert That - Payload is Expected" />
 		</munit:validation>
@@ -424,8 +424,11 @@
 				message="The HTTP Status code is not correct!"
 				doc:name="Assert That Status Code is 500" />
 			<munit-tools:assert-that
-				expression="#[output application/java --- payload]"
-				is="#[MunitTools::equalTo(readUrl('classpath://scaffolder/response/get_500_orders_application_json.json','application/json'))]"
+				expression="#[%dw 2.0
+output application/json
+---
+payload.errorMessage]"
+				is="#[MunitTools::equalTo('Server side error!')]"
 				message="The response payload is not correct!"
 				doc:name="Assert That - Payload is Expected" />
 		</munit:validation>

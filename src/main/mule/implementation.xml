@@ -10,7 +10,7 @@ http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mu
 	
 	
 	<flow name="postOrders" doc:id="330715d5-4129-406b-a445-fc883e0d68a1">
-		<ee:transform doc:name="Transform Message" doc:id="f35b1cb5-c2b3-4723-9e4d-10739c3da391">
+		<ee:transform doc:name="Transform payload to composite object" doc:id="f35b1cb5-c2b3-4723-9e4d-10739c3da391">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -62,7 +62,7 @@ fun items(payload)=
 		<set-variable value="#[payload.compositeResponse[0].body.id]" doc:name="Set Variable" doc:id="321bcdf6-80d1-45f1-aaff-1335a3535258" variableName="id" />
 		<set-payload value="#[payload.compositeResponse]" doc:name="Set Payload" doc:id="b8a703b7-9c0b-43a6-a12b-bdc8c6220488" />
 		<flow-ref doc:name="validatePost" doc:id="7783da2a-7bdd-4b1f-9967-0631665a90a0" name="validatePost" />
-		<ee:transform doc:name="Transform Message" doc:id="a94e71bc-5314-4735-93bb-f93f98bbab06">
+		<ee:transform doc:name="Transform payload to inserted entry id" doc:id="a94e71bc-5314-4735-93bb-f93f98bbab06">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -98,7 +98,9 @@ output application/json
 	</sub-flow>
 	<flow name="getOrders" doc:id="c33b7549-4cff-4f0f-90b0-477395a38111" >
 		<set-variable value="#[[]]" doc:name="Set Acumulador" doc:id="349a68a3-2d96-4077-ac32-081980949522" variableName="acumulador"/>
+		<logger level="INFO" doc:name="Logger" doc:id="45d06010-b43f-41ee-be53-c510534473a5" />
 		<salesforce:query doc:name="Query Order" doc:id="50a1300e-d4cb-43a8-bd6b-ebbd4fda748b" config-ref="Salesforce_Config">
+			<error-mapping targetType="APP:SERVER" />
 			<salesforce:salesforce-query ><![CDATA[SELECT 	Id, PoNumber__c, SignatureRequired__c, ShipInstructions__c,
 		GiftWrapFlag__c, GiftWrapMessage__c,
 	 	CurrencyCode__c, SubTotal__c, Customer__c FROM Order__c 
@@ -110,12 +112,12 @@ output application/json
 	"final": attributes.queryParams.'finalId' as Number
 }]]]></salesforce:parameters>
 		</salesforce:query>
-		<validation:is-not-empty-collection doc:name="Is not empty collection" doc:id="89d92a35-c463-49b8-a90c-7bb415c58af7" config-ref="Validation_Config" message="Order not  found!">
+		<validation:is-not-empty-collection doc:name="Is not empty collection" doc:id="89d92a35-c463-49b8-a90c-7bb415c58af7" config-ref="Validation_Config" message="Get orders returned empty!">
 			<error-mapping sourceType="VALIDATION:EMPTY_COLLECTION" targetType="APP:NOT_FOUND" />
 		</validation:is-not-empty-collection>
 		<foreach doc:name="For Each" doc:id="cc497fa1-e189-4ed5-b507-cc4b8778456f" >
 			<set-variable value="#[payload.Id]" doc:name="Set id" doc:id="885d3230-a134-401a-8177-0b12106981af" variableName="id"/>
-			<ee:transform doc:name="Transform Message" doc:id="d190f8b3-e66b-4ac8-9113-e09ea4eaf501">
+			<ee:transform doc:name="Transform SF Object to JSON" doc:id="d190f8b3-e66b-4ac8-9113-e09ea4eaf501">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
 output application/java
@@ -141,7 +143,7 @@ output application/java
 	"id" : vars.id
 }]]]></salesforce:parameters>
 		</salesforce:query>
-			<ee:transform doc:name="Transform Message" doc:id="8e33a4cf-da12-44b1-9e83-cc1f062642e0" >
+			<ee:transform doc:name="Transform var Accumulator to final result" doc:id="8e33a4cf-da12-44b1-9e83-cc1f062642e0" >
 				<ee:message >
 				</ee:message>
 				<ee:variables >
@@ -162,7 +164,7 @@ vars.acumulador + {
 			</ee:transform>
 		</foreach>
 		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="
-http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:name="Transform body with accumulator">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
 output application/json

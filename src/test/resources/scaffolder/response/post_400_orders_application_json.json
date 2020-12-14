@@ -1,1 +1,4 @@
-{"errorMessage":"Invalid Request!"}
+{
+	"errorMessage":"Bad request!",
+	"description":"expected type: JSONObject, found: Null"
+}
