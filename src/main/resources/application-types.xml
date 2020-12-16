@@ -82,4 +82,6 @@ type OrderData = {|
       </types:output-event>
     </types:processor-declaration>
   </types:enrichment>
+  <types:enrichment select="#1a602a59-1cfd-43e6-b134-7b82c5c86cb4"/>
+  <types:enrichment select="#e93c7afd-604e-4a32-917e-5548e13c2678"/>
 </types:mule>
