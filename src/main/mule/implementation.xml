@@ -98,7 +98,6 @@ output application/json
 	</sub-flow>
 	<flow name="getOrders" doc:id="c33b7549-4cff-4f0f-90b0-477395a38111" >
 		<set-variable value="#[[]]" doc:name="Set Acumulador" doc:id="349a68a3-2d96-4077-ac32-081980949522" variableName="acumulador"/>
-		<logger level="INFO" doc:name="Logger" doc:id="45d06010-b43f-41ee-be53-c510534473a5" />
 		<salesforce:query doc:name="Query Order" doc:id="50a1300e-d4cb-43a8-bd6b-ebbd4fda748b" config-ref="Salesforce_Config">
 			<error-mapping targetType="APP:SERVER" />
 			<salesforce:salesforce-query ><![CDATA[SELECT 	Id, PoNumber__c, SignatureRequired__c, ShipInstructions__c,
@@ -177,36 +176,36 @@ vars.acumulador
 		<logger level="INFO" doc:name="Logger" doc:id="d8cc24ed-7814-4f09-9350-0477459c09aa" message="#[payload]"/>
 	</flow>
 	<flow name="getOrdersById" doc:id="d9bf5508-d605-4ebd-86bf-0522db9bc942" >
-		<logger level="INFO" doc:name="Logger" doc:id="9a92b172-da7f-4eec-aa1b-390246c2dbba" />
-		<salesforce:query doc:name="Query" doc:id="b2a020a8-4866-4493-9770-4b4fe4cce56e" config-ref="Salesforce_Config">
-			<salesforce:salesforce-query ><![CDATA[SELECT 	Id, PoNumber__c, SignatureRequired__c, ShipInstructions__c,
+		<salesforce:query doc:name="Query Order" doc:id="048e1be5-9028-4343-915b-56b3483f440c" config-ref="Salesforce_Config">
+			<error-mapping targetType="APP:SERVER" />
+			<salesforce:salesforce-query><![CDATA[SELECT 	Id, PoNumber__c, SignatureRequired__c, ShipInstructions__c,
 		GiftWrapFlag__c, GiftWrapMessage__c,
 	 	CurrencyCode__c, SubTotal__c, Customer__c FROM Order__c 
-	 	WHERE Id = :id]]></salesforce:salesforce-query>
-			<salesforce:parameters ><![CDATA[#[output application/java
+	 	WHERE Id = ':id']]></salesforce:salesforce-query>
+			<salesforce:parameters><![CDATA[#[output application/json
 ---
 {
-	id : attributes.uriParams.'salesforceId'
+	"id": attributes.uriParams.'salesforceId'
 }]]]></salesforce:parameters>
 		</salesforce:query>
 		<validation:is-not-empty-collection doc:name="Is not empty collection" doc:id="05e41219-3dbe-4154-9f8d-923c44ce5f39" config-ref="Validation_Config" message="Get orders returned empty!" >
 			<error-mapping sourceType="VALIDATION:EMPTY_COLLECTION" targetType="APP:NOT_FOUND" />
 		</validation:is-not-empty-collection>
-		<set-variable value="#[payload.Id]" doc:name="Set id" doc:id="afed773e-467d-4b5d-9022-19519ea3ab52" variableName="id" />
+		<set-variable value="#[payload[0].Id]" doc:name="Set id" doc:id="afed773e-467d-4b5d-9022-19519ea3ab52" variableName="id" />
 		<ee:transform doc:name="Transform SF Object to JSON" doc:id="3c576256-6e9d-491d-b7e5-658b294c1c2b" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/java
 ---
 {
-    "poNumber": payload.PoNumber__c,
-    "signatureRequiredFlag": payload.SignatureRequired__c,
-    "shipInstructions": payload.ShipInstructions__c,
-    "giftWrapFlag": payload.GiftWrapFlag__c,
-    "giftWrapMessage": payload.GiftWrapMessage__c,
-    "currencyCode": payload.CurrencyCode__c,
-    "subTotal": payload.SubTotal__c,
-    "customerSalesforceId":payload.Customer__c
+    "poNumber": payload[0].PoNumber__c,
+    "signatureRequiredFlag": payload[0].SignatureRequired__c,
+    "shipInstructions": payload[0].ShipInstructions__c,
+    "giftWrapFlag": payload[0].GiftWrapFlag__c,
+    "giftWrapMessage": payload[0].GiftWrapMessage__c,
+    "currencyCode": payload[0].CurrencyCode__c,
+    "subTotal": payload[0].SubTotal__c,
+    "customerSalesforceId":payload[0].Customer__c
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
@@ -222,7 +221,7 @@ output application/java
 		<ee:transform doc:name="Transform payload to final result" doc:id="ea83ffbb-f88d-4dc2-8d71-431a59db5f70" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
-output application/java
+output application/json
 ---
 {
 	orderData: vars.order,
