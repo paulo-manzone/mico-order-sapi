@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-    
-	<flow name="mico-composite-order-sapi-main">
+    <flow name="mico-composite-order-sapi-main">
         <http:listener config-ref="mico-composite-order-sapi-httpListenerConfig" path="/api/${api.majorVersion}/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
                 <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
@@ -12,9 +11,10 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
                 <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
             </http:error-response>
         </http:listener>
-        <apikit:router config-ref="mico-composite-order-sapi-config" />
+        <logger level="INFO" doc:name="Logger" doc:id="6df2cb13-c301-466c-8ff1-3f94c3607ade" />
+		<apikit:router config-ref="mico-composite-order-sapi-config" />
         <error-handler>
-            <on-error-propagate type="APIKIT:BAD_REQUEST, APP:BAD_REQUEST, APP:MALFORMED_ID" enableNotifications="true" logException="true">
+            <on-error-propagate type="APIKIT:BAD_REQUEST, APP:BAD_REQUEST" enableNotifications="true" logException="true">
                 <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
@@ -30,14 +30,14 @@ output application/json
                     </ee:variables>
                 </ee:transform>
             </on-error-propagate>
-            <on-error-propagate type="APIKIT:NOT_FOUND" enableNotifications="true" logException="true">
+            <on-error-propagate type="APIKIT:NOT_FOUND">
                 <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {
-	errorMessage: "Resource not found",
+	message: "Resource not found",
 	description: error.description
 }]]></ee:set-payload>
                     </ee:message>
@@ -53,7 +53,7 @@ output application/json
 output application/json
 ---
 {
-	errorMessage: "Method not allowed",
+	message: "Method not allowed",
 	description: error.description
 }]]></ee:set-payload>
                     </ee:message>
@@ -69,7 +69,7 @@ output application/json
 output application/json
 ---
 {
-	errorMessage: "Not acceptable",
+	message: "Not acceptable",
 	description: error.description
 }]]></ee:set-payload>
                     </ee:message>
@@ -85,7 +85,7 @@ output application/json
 output application/json
 ---
 {
-	errorMessage: "Unsupported media type",
+	message: "Unsupported media type",
 	description: error.description
 }]]></ee:set-payload>
                     </ee:message>
@@ -110,8 +110,40 @@ output application/json
                     </ee:variables>
                 </ee:transform>
             </on-error-propagate>
-			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="eecebb9c-55ec-4465-a1c8-ee40094bf405" type="APP:NOT_FOUND">
-				<ee:transform doc:name="Transform Message" doc:id="acf6e481-f137-41d6-9d58-bc775d3ca3a1" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" >
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="2611a09e-c57f-412b-805f-6fcd868a8c5b" type="HTTP:INTERNAL_SERVER_ERROR, APP:SERVER" >
+				<ee:transform doc:name="Transform Message" doc:id="a88ba4f5-70a0-435a-b382-11b52255b0e6" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	errorMessage: "Server side error!",
+	description: error.description
+}]]></ee:set-payload>
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="httpStatus" ><![CDATA[500]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</on-error-propagate>
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="ac05bde7-5873-4f02-b934-addce0fe0851" type="APP:DUPLICATE_ENTRY" >
+				<ee:transform doc:name="Transform Message" doc:id="3444eb71-1824-4e36-8ff4-23998cc9f88f" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	errorMessage: "Duplicate Entry!",
+	description: error.description
+}]]></ee:set-payload>
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="httpStatus" ><![CDATA[409]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</on-error-propagate>
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="f0697de2-629b-4c17-9ff8-6b22a4c0371e" type="APP:NOT_FOUND" >
+				<ee:transform doc:name="Transform Message" doc:id="93a5cef2-db93-42ac-ac07-27b0de9b3db2" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" >
 					<ee:message >
 						<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
@@ -127,41 +159,9 @@ output application/json
 					</ee:variables>
 				</ee:transform>
 			</on-error-propagate>
-			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="b1894b40-a4af-418c-aafb-841cac9eb964" type="APP:DUPLICATE_ENTRY">
-				<ee:transform doc:name="Transform Message" doc:id="1a602a59-1cfd-43e6-b134-7b82c5c86cb4" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" >
-					<ee:message >
-						<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
----
-{
-	errorMessage: "Duplicate Entry!",
-	description: error.description
-}]]></ee:set-payload>
-					</ee:message>
-					<ee:variables >
-						<ee:set-variable variableName="httpStatus" ><![CDATA[409]]></ee:set-variable>
-					</ee:variables>
-				</ee:transform>
-			</on-error-propagate>
-			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="603afab4-f084-47ef-825f-ae9e04cdc455" type="HTTP:INTERNAL_SERVER_ERROR, APP:SERVER">
-				<ee:transform doc:name="Transform Message" doc:id="e93c7afd-604e-4a32-917e-5548e13c2678" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" >
-					<ee:message >
-						<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
----
-{
-	errorMessage: "Server side error!",
-	description: error.description
-}]]></ee:set-payload>
-					</ee:message>
-					<ee:variables >
-						<ee:set-variable variableName="httpStatus" ><![CDATA[500]]></ee:set-variable>
-					</ee:variables>
-				</ee:transform>
-			</on-error-propagate>
         </error-handler>
     </flow>
-	<flow name="mico-composite-order-sapi-console">
+    <flow name="mico-composite-order-sapi-console">
         <http:listener config-ref="mico-composite-order-sapi-httpListenerConfig" path="/console/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
                 <http:headers>#[vars.outboundHeaders default {}]</http:headers>
@@ -171,7 +171,7 @@ output application/json
                 <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:error-response>
         </http:listener>
-        <apikit:console config-ref="mico-composite-order-sapi-config" />
+        <apikit:console config-ref="mico-composite-order-sapi-config"/>
         <error-handler>
             <on-error-propagate type="APIKIT:NOT_FOUND">
                 <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
@@ -189,15 +189,18 @@ output application/json
         </error-handler>
     </flow>
     <flow name="get:\alive:mico-composite-order-sapi-config">
-		<flow-ref doc:name="Flow Reference" doc:id="6db41032-ccff-4eac-b850-9d5ac8c65461" name="getAlive" />
+        <flow-ref doc:name="Flow Reference" doc:id="f37e4cbe-0e3a-4bf4-8262-4bd00acc04d1" name="getAlive"/>
     </flow>
     <flow name="get:\orders:mico-composite-order-sapi-config">
-		<flow-ref doc:name="Flow Reference" doc:id="640bb627-afb7-4339-95a6-0c359e065d09" name="getOrders" />
+		<flow-ref doc:name="Flow Reference" doc:id="fc976a5c-1455-44bd-a198-024af67b9941" name="getOrders"/>
     </flow>
     <flow name="get:\ready:mico-composite-order-sapi-config">
-		<flow-ref doc:name="Flow Reference" doc:id="a010356a-c958-44af-b303-a975e5410c7e" name="getReady" />
+		<flow-ref doc:name="Flow Reference" doc:id="b007ae45-eb00-437f-9a75-f7c917eb41f6" name="getReady"/>
+    </flow>
+    <flow name="get:\orders\(salesforceId):mico-composite-order-sapi-config">
+		<flow-ref doc:name="Flow Reference" doc:id="3e7b69e0-d9ed-425f-8415-5b8e70968c6b" name="getOrdersById"/>
     </flow>
     <flow name="post:\orders:application\json:mico-composite-order-sapi-config">
-		<flow-ref doc:name="Flow Reference" doc:id="a890dfe9-da9a-4a8e-9ab7-c4920957f456" name="postOrders" />
+		<flow-ref doc:name="Flow Reference" doc:id="1f25bd3f-fc21-4665-82bc-9f90bd3eca5f" name="postOrders"/>
     </flow>
 </mule>
