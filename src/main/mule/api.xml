@@ -188,18 +188,18 @@ output application/json
         </error-handler>
     </flow>
     <flow name="get:\alive:mico-composite-order-sapi-config">
-        <flow-ref doc:name="Flow Reference" doc:id="f37e4cbe-0e3a-4bf4-8262-4bd00acc04d1" name="getAlive"/>
+        <flow-ref doc:name="getAlive" doc:id="f37e4cbe-0e3a-4bf4-8262-4bd00acc04d1" name="getAlive"/>
     </flow>
     <flow name="get:\orders:mico-composite-order-sapi-config">
-		<flow-ref doc:name="Flow Reference" doc:id="fc976a5c-1455-44bd-a198-024af67b9941" name="getOrders"/>
+		<flow-ref doc:name="getOrders" doc:id="fc976a5c-1455-44bd-a198-024af67b9941" name="getOrders"/>
     </flow>
     <flow name="get:\ready:mico-composite-order-sapi-config">
-		<flow-ref doc:name="Flow Reference" doc:id="b007ae45-eb00-437f-9a75-f7c917eb41f6" name="getReady"/>
+		<flow-ref doc:name="getReady" doc:id="b007ae45-eb00-437f-9a75-f7c917eb41f6" name="getReady"/>
     </flow>
     <flow name="get:\orders\(salesforceId):mico-composite-order-sapi-config">
-		<flow-ref doc:name="Flow Reference" doc:id="3e7b69e0-d9ed-425f-8415-5b8e70968c6b" name="getOrdersById"/>
+		<flow-ref doc:name="getOrdersById" doc:id="3e7b69e0-d9ed-425f-8415-5b8e70968c6b" name="getOrdersById"/>
     </flow>
     <flow name="post:\orders:application\json:mico-composite-order-sapi-config">
-		<flow-ref doc:name="Flow Reference" doc:id="1f25bd3f-fc21-4665-82bc-9f90bd3eca5f" name="postOrders"/>
+		<flow-ref doc:name="postOrders" doc:id="1f25bd3f-fc21-4665-82bc-9f90bd3eca5f" name="postOrders"/>
     </flow>
 </mule>

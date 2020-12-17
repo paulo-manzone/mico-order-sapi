@@ -83,16 +83,14 @@ output application/json
 		<choice doc:name="Choice" doc:id="d6dfb8fb-2a0d-4b36-bc1e-add986019aa6" >
 			<when expression="#[payload[0].httpStatusCode != 201]">
 				<foreach doc:name="For Each" doc:id="baf4189c-6e19-4ad0-87eb-d4f6b391f3a0">
-			<validation:is-true doc:name="Is true" doc:id="87e8f236-414f-4ca6-83ae-60e0a722feb3" config-ref="Validation_Config" expression="#[payload.body[0].errorCode != 'DUPLICATE_VALUE']">
+			<validation:is-true doc:name="Duplicate value validation" doc:id="87e8f236-414f-4ca6-83ae-60e0a722feb3" config-ref="Validation_Config" expression="#[payload.body[0].errorCode != 'DUPLICATE_VALUE']">
 				<error-mapping sourceType="VALIDATION:INVALID_BOOLEAN" targetType="APP:DUPLICATE_ENTRY" />
 			</validation:is-true>
-			<validation:is-true doc:name="Is true" doc:id="d325f658-bb44-403b-bd43-c1793caca585" expression="#[payload.body[0].errorCode != 'MALFORMED_ID']">
+			<validation:is-true doc:name="MalformedId value validation" doc:id="d325f658-bb44-403b-bd43-c1793caca585" expression="#[payload.body[0].errorCode != 'MALFORMED_ID']">
 				<error-mapping sourceType="VALIDATION:INVALID_BOOLEAN" targetType="APP:MALFORMED_ID" />
 			</validation:is-true>
 		</foreach>
-				<validation:is-true doc:name="Is true" doc:id="86d76806-d866-49d4-88ce-e7e1d41c09e0" config-ref="Validation_Config" expression="#[payload.compositeResponse[0].httpStatusCode == 201]">
-			<error-mapping sourceType="VALIDATION:INVALID_BOOLEAN" targetType="APP:BAD_REQUEST" />
-		</validation:is-true>
+				<raise-error doc:name="Raise error" doc:id="9d68f32c-a5c2-43d9-88a3-9d17a9380687" type="#['APP:BAD_REQUEST']"/>
 			</when>
 		</choice>
 	</sub-flow>

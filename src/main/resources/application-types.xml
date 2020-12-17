@@ -84,4 +84,27 @@ type OrderData = {|
   </types:enrichment>
   <types:enrichment select="#1a602a59-1cfd-43e6-b134-7b82c5c86cb4"/>
   <types:enrichment select="#e93c7afd-604e-4a32-917e-5548e13c2678"/>
+  <types:enrichment select="#3c576256-6e9d-491d-b7e5-658b294c1c2b">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="OrderSf"/>
+        </types:message>
+      </types:input-event>
+      <types:output-event>
+        <types:message>
+          <types:payload type="OrderData"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#ea83ffbb-f88d-4dc2-8d71-431a59db5f70">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="Order"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
 </types:mule>
