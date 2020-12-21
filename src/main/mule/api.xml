@@ -141,10 +141,26 @@ output application/json
 					</ee:variables>
 				</ee:transform>
 			</on-error-propagate>
-			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="f0697de2-629b-4c17-9ff8-6b22a4c0371e" type="APP:NOT_FOUND" >
-				<ee:transform doc:name="Transform Message" doc:id="93a5cef2-db93-42ac-ac07-27b0de9b3db2" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" >
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="2a4c89fc-19f0-4a52-ae94-de384b5598b6" type="APP:MALFORMED_ID" >
+				<ee:transform doc:name="Transform Message" doc:id="8cd6f289-bd84-4871-aef0-1e48de2b617d" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" >
 					<ee:message >
 						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	errorMessage: "Malformed Id!",
+	description: error.description
+}]]></ee:set-payload>
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="httpStatus" ><![CDATA[409]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</on-error-propagate>
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="f0697de2-629b-4c17-9ff8-6b22a4c0371e" type="APP:NOT_FOUND">
+				<ee:transform doc:name="Transform Message" doc:id="93a5cef2-db93-42ac-ac07-27b0de9b3db2" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {
@@ -153,8 +169,8 @@ output application/json
 }
 ]]></ee:set-payload>
 					</ee:message>
-					<ee:variables >
-						<ee:set-variable variableName="httpStatus" ><![CDATA[404]]></ee:set-variable>
+					<ee:variables>
+						<ee:set-variable variableName="httpStatus"><![CDATA[404]]></ee:set-variable>
 					</ee:variables>
 				</ee:transform>
 			</on-error-propagate>
