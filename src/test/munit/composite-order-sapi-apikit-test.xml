@@ -486,4 +486,166 @@ payload.errorMessage]"
 				doc:name="Assert That - Payload is Expected" />
 		</munit:validation>
 	</munit:test>
+	<munit:test name="get:\orderbyid:mico-composite-order-sapi-config-200-application\json-FlowTest" doc:id="d6903d9b-b1dd-4094-8e31-e2709342c045" >
+		<munit:enable-flow-sources >
+			<munit:enable-flow-source value="mico-composite-order-sapi-main" />
+			<munit:enable-flow-source value="get:\orders\(salesforceId):mico-composite-order-sapi-config" />
+		</munit:enable-flow-sources>
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="50b8d7c7-01a1-476e-908d-cd457e77cf76" processor="salesforce:query">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Query Order" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="048e1be5-9028-4343-915b-56b3483f440c" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="Salesforce_Config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value=' #[
+[{
+  PoNumber__c: 123473.0,
+  SubTotal__c: 41.5,
+  GiftWrapFlag__c: true,
+  GiftWrapMessage__c: "You rock!",
+  SignatureRequired__c: false,
+  ShipInstructions__c: "Dont break it",
+  "Id": "a024W00000K1eVzQAJ",
+  "type": "Order__c",
+  CurrencyCode__c: "USD",
+  Customer__c:"a004W00000dY3hrQAC"
+}]
+]' mediaType="application/java" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock when" doc:id="39b6a2fa-7208-4392-956d-c3ee56cb31d9" processor="salesforce:query" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Query Items" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="e4c75fa9-adc1-4c3a-bae7-a4446a6a081d" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="Salesforce_Config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value='#[[
+  {
+    "ItemId__c": 12345.0,
+    "Category__c": "T-Shirt",
+    "Size__c": "M",
+    "Id": 123124.0,
+    "type": "Item__c",
+    "Quantity__c": 4.0
+  }, 
+  {
+    "ItemId__c": 34567.0,
+    "Category__c": "Hoodie",
+    Size__c: "M",
+    "Id": 45890.0,
+    "type": "Item__c",
+    "Quantity__c": 2.0
+  }
+]]' mediaType="application/java" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<http:request method="GET" doc:name="Request" doc:id="95bd4ab8-e757-40b2-8c14-207de558e7b2" config-ref="HTTP_Request_Configuration" path="/orders/a024W00000KCplcQAD" >
+				<http:headers ><![CDATA[#[{"Accept":"application/json"}]]]></http:headers>
+				<http:response-validator >
+					<http:success-status-code-validator values="200" />
+				</http:response-validator>
+			</http:request>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert That Status Code is 200" doc:id="012cdce2-427c-4f63-9a56-f24fbfe34331" message="The HTTP Status code is not correct!" expression="#[attributes.statusCode]" is="#[MunitTools::equalTo(200)]" />
+			<munit-tools:assert-that doc:name="Assert That - Payload is Expected" doc:id="649af73f-35f7-47d0-83b2-d32613db29d4" message="The response payload is not correct!" expression="#[output application/java --- payload]" is="#[MunitTools::equalTo(readUrl('classpath://scaffolder/response/get_200_orders_{salesforceId}_application_json.json','application/json'))]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="get:\orderbyid:mico-composite-order-sapi-config-400-application\json-FlowTest" doc:id="71dba18b-a0d7-496e-bae1-4bfd1bb7942f">
+		<munit:enable-flow-sources >
+			<munit:enable-flow-source value="mico-composite-order-sapi-main" />
+			<munit:enable-flow-source value="get:\orders\(salesforceId):mico-composite-order-sapi-config" />
+		</munit:enable-flow-sources>
+		<munit:behavior>
+			<munit-tools:mock-when doc:name="Mock when" doc:id="f5ba69f0-68da-431e-ab60-7cc0f5c8f4c5" processor="validation:is-not-empty-collection">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Is not empty collection" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="05e41219-3dbe-4154-9f8d-923c44ce5f39" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="Validation_Config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APP:BAD_REQUEST" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<http:request method="GET" doc:name="Request" doc:id="e8f7f0fe-bab1-4437-995d-c6b0a3bf6b38" config-ref="HTTP_Request_Configuration" path="/orders/a024W00000KCplcQAD">
+				<http:headers><![CDATA[#[{"Accept":"application/json"}]]]></http:headers>
+				<http:response-validator >
+					<http:success-status-code-validator values="400" />
+				</http:response-validator>
+			</http:request>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert That Status Code is 400" doc:id="0a06789e-fdcf-4901-9b0d-eb1fcd5d497d" message="The HTTP Status code is not correct!" expression="#[attributes.statusCode]" is="#[MunitTools::equalTo(400)]" />
+			<munit-tools:assert-that doc:name="Assert That - Payload is Expected" doc:id="b19a760d-b1c9-4928-afc8-c268b4250874" message="The response payload is not correct!" expression="#[output application/java --- payload.errorMessage]" is="#[MunitTools::equalTo('Bad request!')]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="get:\orderbyid:mico-composite-order-sapi-config-404-application\json-FlowTest" doc:id="93235003-cea5-40c3-944f-c07be317fb8a">
+		<munit:enable-flow-sources >
+			<munit:enable-flow-source value="mico-composite-order-sapi-main" />
+			<munit:enable-flow-source value="get:\orders\(salesforceId):mico-composite-order-sapi-config" />
+		</munit:enable-flow-sources>
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="5bf8d86c-c619-4e3e-81b8-667278b0f97d" processor="salesforce:query">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Query Order" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="048e1be5-9028-4343-915b-56b3483f440c" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="Salesforce_Config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+			
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[[]]" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<http:request method="GET" doc:name="Request" doc:id="a1a77a0c-06a1-4b25-adee-4cb03c689246" config-ref="HTTP_Request_Configuration" path="/orders/a024W00000KCplcQAD" >
+				<http:headers ><![CDATA[#[{"Accept":"application/json"}]]]></http:headers>
+				<http:response-validator >
+					<http:success-status-code-validator values="404" />
+				</http:response-validator>
+			</http:request>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert That Status Code is 404" doc:id="3adc8c74-0190-4b40-bf53-7a26685b60fa" message="The HTTP Status code is not correct!" expression="#[attributes.statusCode]" is="#[MunitTools::equalTo(404)]" />
+			<munit-tools:assert-that doc:name="Assert That - Payload is Expected" doc:id="e30c1c1c-5185-41e1-9543-ed3ec566a188" message="The response payload is not correct!" expression="#[output application/java --- payload.errorMessage]" is="#[MunitTools::equalTo('Orders not found!')]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="get:\orderbyid:mico-composite-order-sapi-config-500-application\json-FlowTest" doc:id="71ba64eb-31b1-4176-a8d9-da428bdf51ec">
+		<munit:enable-flow-sources >
+			<munit:enable-flow-source value="mico-composite-order-sapi-main" />
+			<munit:enable-flow-source value="get:\orders\(salesforceId):mico-composite-order-sapi-config" />
+		</munit:enable-flow-sources>
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="78b5fb20-dbb9-495a-ad7c-c4bf4e368278" processor="salesforce:query">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Query Order" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="048e1be5-9028-4343-915b-56b3483f440c" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="Salesforce_Config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APP:SERVER" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<http:request method="GET" doc:name="Request" doc:id="04ba3c11-d3d5-4250-ae45-4b7e924d3b65" config-ref="HTTP_Request_Configuration" path="/orders/a024W00000KCplcQAD" >
+				<http:headers ><![CDATA[#[{"Accept":"application/json"}]]]></http:headers>
+				<http:response-validator >
+					<http:success-status-code-validator values="500" />
+				</http:response-validator>
+			</http:request>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert That Status Code is 500" doc:id="66c27f4b-6c51-48ac-a304-403c0d0d3a52" message="The HTTP Status code is not correct!" expression="#[attributes.statusCode]" is="#[MunitTools::equalTo(500)]" />
+		</munit:validation>
+	</munit:test>
 </mule>
