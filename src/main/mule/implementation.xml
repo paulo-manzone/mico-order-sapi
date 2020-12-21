@@ -79,7 +79,6 @@ output application/json
 		</ee:transform>
 	</flow>
 	<sub-flow name="validatePost" doc:id="42f06da2-3ebd-4d64-a51f-9cffce9fd6c6" >
-		<logger level="INFO" doc:name="Logger" doc:id="3b6078a6-1dc2-412a-abac-6f6ab75c42be" message="#[payload]" />
 		<choice doc:name="Choice" doc:id="d6dfb8fb-2a0d-4b36-bc1e-add986019aa6" >
 			<when expression="#[payload[0].httpStatusCode != 201]">
 				<foreach doc:name="For Each" doc:id="baf4189c-6e19-4ad0-87eb-d4f6b391f3a0">
@@ -171,7 +170,6 @@ vars.acumulador
 ]]></ee:set-payload>
             </ee:message>
         </ee:transform>
-		<logger level="INFO" doc:name="Logger" doc:id="d8cc24ed-7814-4f09-9350-0477459c09aa" message="#[payload]"/>
 	</flow>
 	<flow name="getOrdersById" doc:id="d9bf5508-d605-4ebd-86bf-0522db9bc942" >
 		<salesforce:query doc:name="Query Order" doc:id="048e1be5-9028-4343-915b-56b3483f440c" config-ref="Salesforce_Config">
