@@ -100,12 +100,12 @@ output application/json
 			<salesforce:salesforce-query ><![CDATA[SELECT 	Id, PoNumber__c, SignatureRequired__c, ShipInstructions__c,
 		GiftWrapFlag__c, GiftWrapMessage__c,
 	 	CurrencyCode__c, SubTotal__c, Customer__c FROM Order__c 
-	 	WHERE PoNumber__c >= :initial AND PoNumber__c <= :final]]></salesforce:salesforce-query>
+	 	WHERE Subtotal__c >= :initial AND Subtotal__c <= :final]]></salesforce:salesforce-query>
 			<salesforce:parameters ><![CDATA[#[output application/json
 ---
 {
-	"initial": attributes.queryParams.'initialId' as Number,
-	"final": attributes.queryParams.'finalId' as Number
+	"initial": attributes.queryParams.'initialSubtotal' as Number,
+	"final": attributes.queryParams.'finalSubtotal' as Number
 }]]]></salesforce:parameters>
 		</salesforce:query>
 		<validation:is-not-empty-collection doc:name="Is not empty collection" doc:id="89d92a35-c463-49b8-a90c-7bb415c58af7" config-ref="Validation_Config" message="Get orders returned empty!">
