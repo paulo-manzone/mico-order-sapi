@@ -107,4 +107,13 @@ type OrderData = {|
       </types:output-event>
     </types:processor-declaration>
   </types:enrichment>
+  <types:enrichment select="#563b7430-96a9-412b-ab0b-27ea7515b82e">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="Order"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
 </types:mule>

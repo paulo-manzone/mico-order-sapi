@@ -94,8 +94,7 @@ output application/json
 		</choice>
 	</sub-flow>
 	<flow name="getOrders" doc:id="c33b7549-4cff-4f0f-90b0-477395a38111" >
-		<set-variable value="#[[]]" doc:name="Set Acumulador" doc:id="349a68a3-2d96-4077-ac32-081980949522" variableName="acumulador"/>
-		<salesforce:query doc:name="Query Order" doc:id="50a1300e-d4cb-43a8-bd6b-ebbd4fda748b" config-ref="Salesforce_Config">
+		<salesforce:query doc:name="Query Order" doc:id="50a1300e-d4cb-43a8-bd6b-ebbd4fda748b" config-ref="Salesforce_Config" target="orders">
 			<error-mapping targetType="APP:SERVER" />
 			<salesforce:salesforce-query ><![CDATA[SELECT 	Id, PoNumber__c, SignatureRequired__c, ShipInstructions__c,
 		GiftWrapFlag__c, GiftWrapMessage__c,
@@ -108,68 +107,46 @@ output application/json
 	"final": attributes.queryParams.'finalSubtotal' as Number
 }]]]></salesforce:parameters>
 		</salesforce:query>
-		<validation:is-not-empty-collection doc:name="Is not empty collection" doc:id="89d92a35-c463-49b8-a90c-7bb415c58af7" config-ref="Validation_Config" message="Get orders returned empty!">
+		<validation:is-not-empty-collection doc:name="Is not empty collection" doc:id="89d92a35-c463-49b8-a90c-7bb415c58af7" config-ref="Validation_Config" message="Get orders returned empty!" values="#[vars.orders]">
 			<error-mapping sourceType="VALIDATION:EMPTY_COLLECTION" targetType="APP:NOT_FOUND" />
 		</validation:is-not-empty-collection>
-		<foreach doc:name="For Each" doc:id="cc497fa1-e189-4ed5-b507-cc4b8778456f" >
-			<set-variable value="#[payload.Id]" doc:name="Set id" doc:id="885d3230-a134-401a-8177-0b12106981af" variableName="id"/>
-			<ee:transform doc:name="Transform SF Object to JSON" doc:id="d190f8b3-e66b-4ac8-9113-e09ea4eaf501">
-			<ee:message>
-				<ee:set-payload><![CDATA[%dw 2.0
-output application/java
----
-{
-    "poNumber": payload.PoNumber__c,
-    "signatureRequiredFlag": payload.SignatureRequired__c,
-    "shipInstructions": payload.ShipInstructions__c,
-    "giftWrapFlag": payload.GiftWrapFlag__c,
-    "giftWrapMessage": payload.GiftWrapMessage__c,
-    "currencyCode": payload.CurrencyCode__c,
-    "subTotal": payload.SubTotal__c,
-    "customerSalesforceId":payload.Customer__c
-}]]></ee:set-payload>
-			</ee:message>
-		</ee:transform>
-			<set-variable value="#[payload]" doc:name="Set Order" doc:id="203cd7fa-a4b8-4793-b2ac-c9c1746edcdd" variableName="order"/>
-			<salesforce:query doc:name="Query Items" doc:id="df6f218d-fc12-4ffa-8e85-64ff1034a839" config-ref="Salesforce_Config">
-			<salesforce:salesforce-query><![CDATA[SELECT ItemId__c, Category__c, Quantity__c, Size__c FROM Item__c WHERE Order__c = ':id']]></salesforce:salesforce-query>
+		<salesforce:query doc:name="Query Items" doc:id="df6f218d-fc12-4ffa-8e85-64ff1034a839" config-ref="Salesforce_Config" target="items">
+			<salesforce:salesforce-query><![CDATA[SELECT ItemId__c, Category__c, Quantity__c, Size__c, Order__c FROM Item__c WHERE Order__c IN 
+(SELECT Id FROM Order__c WHERE Subtotal__c > :initial AND Subtotal__c < :final)]]></salesforce:salesforce-query>
 			<salesforce:parameters><![CDATA[#[output application/json
 ---
 {
-	"id" : vars.id
+	"initial": attributes.queryParams.'initialSubtotal' as Number,
+	"final": attributes.queryParams.'finalSubtotal' as Number
 }]]]></salesforce:parameters>
 		</salesforce:query>
-			<ee:transform doc:name="Transform var Accumulator to final result" doc:id="8e33a4cf-da12-44b1-9e83-cc1f062642e0" >
-				<ee:message >
-				</ee:message>
-				<ee:variables >
-					<ee:set-variable variableName="acumulador" ><![CDATA[%dw 2.0
-output application/java
----
-vars.acumulador + {
-	orderData: vars.order,
-	items: 
-		payload map () -> {
-			id: $.ItemId__c,
-			category: $.Category__c,
-			quantity:$.Quantity__c,
-			size: $.Size__c
-		}
-}]]></ee:set-variable>
-				</ee:variables>
-			</ee:transform>
-		</foreach>
-		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="
-http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:name="Transform body with accumulator">
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-vars.acumulador
-
-]]></ee:set-payload>
-            </ee:message>
-        </ee:transform>
+		<set-payload value="#[vars.orders]" doc:name="Set Payload as Orders" doc:id="37c51158-1c44-47ee-830c-4750ce7cd29e" />
+		<ee:transform doc:name="Transform Message" doc:id="563b7430-96a9-412b-ab0b-27ea7515b82e">
+			<ee:message>
+				<ee:set-payload><![CDATA[	%dw 2.0
+	output application/json
+	---
+	payload map (order, orderIndex) -> {
+		orderData:{
+					"poNumber": order.PoNumber__c,
+					"signatureRequiredFlag": order.SignatureRequired__c,
+					"shipInstructions": order.ShipInstructions__c,
+				    "giftWrapFlag": order.GiftWrapFlag__c,
+				    "giftWrapMessage": order.GiftWrapMessage__c,
+				    "currencyCode": order.CurrencyCode__c,
+				    "subTotal": order.SubTotal__c,
+				    "customerSalesforceId": order.Customer__c
+				},
+		items: 
+			vars.items filter($.Order__c == order.Id) map (item, itemIndex) -> {
+				id: item.ItemId__c,
+				category: item.Category__c,
+				quantity:item.Quantity__c,
+				size: item.Size__c
+			}
+	}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
 	</flow>
 	<flow name="getOrdersById" doc:id="d9bf5508-d605-4ebd-86bf-0522db9bc942" >
 		<salesforce:query doc:name="Query Order" doc:id="048e1be5-9028-4343-915b-56b3483f440c" config-ref="Salesforce_Config">
