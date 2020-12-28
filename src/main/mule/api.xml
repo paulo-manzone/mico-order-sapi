@@ -132,8 +132,8 @@ output application/json
 output application/json
 ---
 {
-	errorMessage: "Duplicate Entry!",
-	description: error.description
+	errorMessage: "Conflict!",
+	description: "Duplicate Entry!"
 }]]></ee:set-payload>
 					</ee:message>
 					<ee:variables >
@@ -148,8 +148,8 @@ output application/json
 output application/json
 ---
 {
-	errorMessage: "Malformed Id!",
-	description: error.description
+	errorMessage: "Conflict!",
+	description: "Malformed Id!"
 }]]></ee:set-payload>
 					</ee:message>
 					<ee:variables >
