@@ -203,20 +203,11 @@ payload.errorMessage]"
 			<munit:enable-flow-source value="get:\orders:mico-composite-order-sapi-config" />
 		</munit:enable-flow-sources>
 		<munit:behavior>
-			<munit-tools:mock-when
-				doc:name="Mock when"
-				doc:id="a81d2686-f6ef-46fd-b5ee-e4e9d1be8a33"
-				processor="salesforce:query">
-				<munit-tools:with-attributes>
-					<munit-tools:with-attribute
-						whereValue="Query Order"
-						attributeName="doc:name" />
-					<munit-tools:with-attribute
-						whereValue="50a1300e-d4cb-43a8-bd6b-ebbd4fda748b"
-						attributeName="doc:id" />
-					<munit-tools:with-attribute
-						whereValue="Salesforce_Config"
-						attributeName="config-ref" />
+			<munit-tools:mock-when doc:name="Mock when" doc:id="10d5628b-2923-4f45-8226-4b27a2170d7b" processor="salesforce:query">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Query Order" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="50a1300e-d4cb-43a8-bd6b-ebbd4fda748b" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="Salesforce_Config" attributeName="config-ref" />
 				</munit-tools:with-attributes>
 				<munit-tools:then-return >
 					<munit-tools:payload value=' #[
@@ -235,10 +226,7 @@ payload.errorMessage]"
 ]' mediaType="application/java" />
 				</munit-tools:then-return>
 			</munit-tools:mock-when>
-			<munit-tools:mock-when
-				doc:name="Mock when"
-				doc:id="365bf72e-86f5-4cbf-86ea-6d92a82d7337"
-				processor="salesforce:query">
+			<munit-tools:mock-when doc:name="Mock when" doc:id="8077c529-c0c0-492f-8f25-0c4ac05ff29a" processor="salesforce:query">
 				<munit-tools:with-attributes >
 					<munit-tools:with-attribute whereValue="Query Items" attributeName="doc:name" />
 					<munit-tools:with-attribute whereValue="df6f218d-fc12-4ffa-8e85-64ff1034a839" attributeName="doc:id" />
@@ -262,7 +250,7 @@ payload.errorMessage]"
     "type": "Item__c",
     "Quantity__c": 2.0
   }
-]]' mediaType="application/java" />
+]]' />
 				</munit-tools:then-return>
 			</munit-tools:mock-when>
 		</munit:behavior>
@@ -273,7 +261,7 @@ payload.errorMessage]"
 				path="/orders"
 				responseTimeout="100000">
 				<http:headers><![CDATA[#[{"Accept":"application/json"}]]]></http:headers>
-				<http:query-params><![CDATA[#[{"finalId":"0","initialId":"7000000"}]]]></http:query-params>
+				<http:query-params><![CDATA[#[{"finalSubtotal":"0","initialSubtotal":"7000000"}]]]></http:query-params>
 			</http:request>
 		</munit:execution>
 		<munit:validation>
@@ -327,7 +315,7 @@ payload.errorMessage]"
 				method="GET"
 				path="/orders">
 				<http:headers><![CDATA[#[{"Accept":"application/json"}]]]></http:headers>
-				<http:query-params><![CDATA[#[{"finalId":"0","initialId":"0"}]]]></http:query-params>
+				<http:query-params><![CDATA[#[{"finalSubtotal":"0","initialSubtotal":"0"}]]]></http:query-params>
 				<http:response-validator>
 					<http:success-status-code-validator values="404" />
 				</http:response-validator>
@@ -410,8 +398,8 @@ payload.errorMessage]"
 				config-ref="HTTP_Request_Configuration"
 				method="GET"
 				path="/orders">
-				<http:headers>#[{"Accept":"application/json"}]</http:headers>
-				<http:query-params>#[{"finalId":"","initialId":""}]</http:query-params>
+				<http:headers><![CDATA[#[{"Accept":"application/json"}]]]></http:headers>
+				<http:query-params><![CDATA[#[{"finalSubtotal":"","initialSubtotal":""}]]]></http:query-params>
 				<http:response-validator>
 					<http:success-status-code-validator values="500" />
 				</http:response-validator>
