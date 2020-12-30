@@ -477,7 +477,7 @@ payload.errorMessage]"
 	<munit:test name="get:\orderbyid:mico-composite-order-sapi-config-200-application\json-FlowTest" doc:id="d6903d9b-b1dd-4094-8e31-e2709342c045" >
 		<munit:enable-flow-sources >
 			<munit:enable-flow-source value="mico-composite-order-sapi-main" />
-			<munit:enable-flow-source value="get:\orders\(salesforceId):mico-composite-order-sapi-config" />
+			<munit:enable-flow-source value="get:\orders\(poNumber):mico-composite-order-sapi-config" />
 		</munit:enable-flow-sources>
 		<munit:behavior >
 			<munit-tools:mock-when doc:name="Mock when" doc:id="50b8d7c7-01a1-476e-908d-cd457e77cf76" processor="salesforce:query">
@@ -547,7 +547,7 @@ payload.errorMessage]"
 	<munit:test name="get:\orderbyid:mico-composite-order-sapi-config-400-application\json-FlowTest" doc:id="71dba18b-a0d7-496e-bae1-4bfd1bb7942f">
 		<munit:enable-flow-sources >
 			<munit:enable-flow-source value="mico-composite-order-sapi-main" />
-			<munit:enable-flow-source value="get:\orders\(salesforceId):mico-composite-order-sapi-config" />
+			<munit:enable-flow-source value="get:\orders\(poNumber):mico-composite-order-sapi-config" />
 		</munit:enable-flow-sources>
 		<munit:behavior>
 			<munit-tools:mock-when doc:name="Mock when" doc:id="f5ba69f0-68da-431e-ab60-7cc0f5c8f4c5" processor="validation:is-not-empty-collection">
@@ -578,7 +578,7 @@ payload.errorMessage]"
 	<munit:test name="get:\orderbyid:mico-composite-order-sapi-config-404-application\json-FlowTest" doc:id="93235003-cea5-40c3-944f-c07be317fb8a">
 		<munit:enable-flow-sources >
 			<munit:enable-flow-source value="mico-composite-order-sapi-main" />
-			<munit:enable-flow-source value="get:\orders\(salesforceId):mico-composite-order-sapi-config" />
+			<munit:enable-flow-source value="get:\orders\(poNumber):mico-composite-order-sapi-config" />
 		</munit:enable-flow-sources>
 		<munit:behavior >
 			<munit-tools:mock-when doc:name="Mock when" doc:id="5bf8d86c-c619-4e3e-81b8-667278b0f97d" processor="salesforce:query">
@@ -609,7 +609,7 @@ payload.errorMessage]"
 	<munit:test name="get:\orderbyid:mico-composite-order-sapi-config-500-application\json-FlowTest" doc:id="71ba64eb-31b1-4176-a8d9-da428bdf51ec">
 		<munit:enable-flow-sources >
 			<munit:enable-flow-source value="mico-composite-order-sapi-main" />
-			<munit:enable-flow-source value="get:\orders\(salesforceId):mico-composite-order-sapi-config" />
+			<munit:enable-flow-source value="get:\orders\(poNumber):mico-composite-order-sapi-config" />
 		</munit:enable-flow-sources>
 		<munit:behavior >
 			<munit-tools:mock-when doc:name="Mock when" doc:id="78b5fb20-dbb9-495a-ad7c-c4bf4e368278" processor="salesforce:query">

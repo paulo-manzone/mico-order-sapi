@@ -140,7 +140,7 @@ message.payload map (order, orderIndex) -> {
 			</ee:message>
 		</ee:transform>
 	</flow>
-	<flow name="getOrdersById" doc:id="d9bf5508-d605-4ebd-86bf-0522db9bc942" >
+	<flow name="getOrdersByPoNumber" doc:id="d9bf5508-d605-4ebd-86bf-0522db9bc942" >
 		<salesforce:query doc:name="Query Order" doc:id="048e1be5-9028-4343-915b-56b3483f440c" config-ref="Salesforce_Config">
 			<error-mapping targetType="APP:SERVER" />
 			<salesforce:salesforce-query><![CDATA[SELECT 	Id, PoNumber__c, SignatureRequired__c, ShipInstructions__c,
@@ -148,11 +148,11 @@ message.payload map (order, orderIndex) -> {
 	 	CurrencyCode__c, SubTotal__c, Customer__c, 
 	    (SELECT ItemId__c, Category__c, Quantity__c, Size__c, Order__c FROM Items__r) 
 	 	FROM Order__c 
-	 	WHERE Id = ':id']]></salesforce:salesforce-query>
+	 	WHERE PoNumber__c = :poNumber]]></salesforce:salesforce-query>
 			<salesforce:parameters><![CDATA[#[output application/json
 ---
 {
-	"id": attributes.uriParams.'salesforceId'
+	"poNumber": attributes.uriParams.'poNumber' as Number
 }]]]></salesforce:parameters>
 		</salesforce:query>
 		<validation:is-not-empty-collection doc:name="Is not empty collection" doc:id="05e41219-3dbe-4154-9f8d-923c44ce5f39" config-ref="Validation_Config" message="Get orders returned empty" >

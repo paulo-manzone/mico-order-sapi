@@ -12,10 +12,10 @@ http://www.mulesoft.org/schema/mule/error-handler-plugin http://www.mulesoft.org
                 <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
             </http:error-response>
         </http:listener>
-		<apikit:router config-ref="mico-composite-order-sapi-config" />
+        <apikit:router config-ref="mico-composite-order-sapi-config"/>
         <error-handler>
-			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="2cb5a250-f1e2-4931-b237-f1703b371183" type="APP:NOT_FOUND">
-				<ee:transform doc:name="Transform Message" doc:id="08a268b9-d73f-472e-993f-069ea57ec7e3">
+            <on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="1be870e8-ca46-4aed-9dfc-c9e17d61a53a" type="APP:NOT_FOUND">
+				<ee:transform doc:name="Transform Message" doc:id="a562c40c-c505-4e4a-ab1d-79a4bd2cf1e1">
 					<ee:message />
 					<ee:variables>
 						<ee:set-variable variableName="errorDetails"><![CDATA[%dw 2.0
@@ -24,12 +24,12 @@ output application/java
 error.muleMessage.typedValue.errorDetails default []]]></ee:set-variable>
 					</ee:variables>
 				</ee:transform>
-				<set-variable value="404" doc:name="Set httpStatus" doc:id="53a305ec-2566-4fd7-ab7d-b758520b6079" variableName="httpStatus" />
-				<error-handler-plugin:on-error doc:name="Process Error" doc:id="7074e6a3-d1de-47b8-8f9f-320482814c82" notFoundError="Order not found" errorTypes="APP:NOT_FOUND" errorCodes="#[vars.httpStatus]" errorMessages='#[error.detailedDescription default " " replace "," with " "]' />
+				<set-variable value="404" doc:name="Set httpStatus" doc:id="66b1f00e-df00-4632-bf25-59072110d585" variableName="httpStatus" />
+				<error-handler-plugin:on-error doc:name="Process Error" doc:id="4cc2d578-fb6f-46c1-81f4-6dea218e4660" notFoundError="Order not found" errorTypes="APP:NOT_FOUND" errorCodes="#[vars.httpStatus]" errorMessages='#[error.detailedDescription default " " replace "," with " "]' />
 			</on-error-propagate>
 			
-			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="7b25a29c-b97f-43da-a9aa-286fa4f0f815" type="APP:DUPLICATE_ENTRY">
-				<ee:transform doc:name="Transform Message" doc:id="9197aa3b-c2f1-4083-8cdb-66193144eb90">
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="2151cec9-a01a-4914-8503-f17eb887c70a" type="APP:DUPLICATE_ENTRY">
+				<ee:transform doc:name="Transform Message" doc:id="71a2925b-a757-4386-b1a5-f29a5df0bac1">
 					<ee:message />
 					<ee:variables>
 						<ee:set-variable variableName="errorDetails"><![CDATA[%dw 2.0
@@ -38,11 +38,11 @@ output application/java
 error.muleMessage.typedValue.errorDetails default []]]></ee:set-variable>
 					</ee:variables>
 				</ee:transform>
-				<set-variable value="409" doc:name="Set httpStatus" doc:id="b3287b37-3729-4842-9171-9919fde84c6b" variableName="httpStatus" />
-				<error-handler-plugin:on-error doc:name="Process Error" doc:id="0fabc59c-f7b1-428f-992a-9f9e2574f5af" notFoundError="Resource not found" errorTypes="APP:DUPLICATE_ENTRY" errorCodes="#[vars.httpStatus]" errorMessages='#[error.detailedDescription default " " replace "," with " "]'/>
+				<set-variable value="409" doc:name="Set httpStatus" doc:id="b5cba67e-bcf6-4cc4-a949-c0a3f17e1754" variableName="httpStatus" />
+				<error-handler-plugin:on-error doc:name="Process Error" doc:id="653b6c3f-c13a-4896-847b-4cc8ff455ff5" notFoundError="Resource not found" errorTypes="APP:DUPLICATE_ENTRY" errorCodes="#[vars.httpStatus]" errorMessages='#[error.detailedDescription default " " replace "," with " "]'/>
 			</on-error-propagate>
-			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="c8efd90b-5ef3-4853-a59c-dd8ceb2d30d7" type="APP:MALFORMED_ID">
-				<ee:transform doc:name="Transform Message" doc:id="bc23a6d3-01f0-4f5c-badc-97e9042dfac1" >
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="9042f99a-7203-4896-b3d8-e98e4beb4230" type="APP:MALFORMED_ID">
+				<ee:transform doc:name="Transform Message" doc:id="d9cff896-cfe7-4147-ab61-e76210794f1a" >
 					<ee:message />
 					<ee:variables >
 						<ee:set-variable variableName="errorDetails" ><![CDATA[%dw 2.0
@@ -51,12 +51,12 @@ output application/java
 error.muleMessage.typedValue.errorDetails default []]]></ee:set-variable>
 					</ee:variables>
 				</ee:transform>
-				<set-variable value="409" doc:name="Set httpStatus" doc:id="319c5c29-7498-4ec3-bfad-30cf0833dbc1" variableName="httpStatus" />
-				<error-handler-plugin:on-error doc:name="Process Error" doc:id="ad1306b7-20ec-44e6-9631-68d2cd2ae3fe" notFoundError="Resource not found" errorTypes="APP:MALFORMED_ID" errorCodes="#[vars.httpStatus]" errorMessages='#[error.detailedDescription default " " replace "," with " "]' />
+				<set-variable value="409" doc:name="Set httpStatus" doc:id="f535f2d4-f4ad-4e2c-948f-bedd9f9518d7" variableName="httpStatus" />
+				<error-handler-plugin:on-error doc:name="Process Error" doc:id="fe2b9eea-2bf9-4df8-8ea9-7d8e3995f2ca" notFoundError="Resource not found" errorTypes="APP:MALFORMED_ID" errorCodes="#[vars.httpStatus]" errorMessages='#[error.detailedDescription default " " replace "," with " "]' />
 			</on-error-propagate>
 			
-			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="739b981a-6364-4f13-a1c4-807ed4eae292" type="APP:BAD_REQUEST">
-				<ee:transform doc:name="Transform Message" doc:id="9677274f-e45b-4a8a-a49c-36b5c53e1780">
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="28a8af35-68ab-4c83-a1b1-cb21e5c18536" type="APP:BAD_REQUEST">
+				<ee:transform doc:name="Transform Message" doc:id="bebd5f6a-333e-478c-9168-758131d3aa48">
 					<ee:message />
 					<ee:variables>
 						<ee:set-variable variableName="errorDetails"><![CDATA[%dw 2.0
@@ -65,13 +65,25 @@ output application/java
 error.muleMessage.typedValue.errorDetails default []]]></ee:set-variable>
 					</ee:variables>
 				</ee:transform>
-				<set-variable value="#[400]" doc:name="Set httpStatus" doc:id="ae6fa72b-1b84-430a-9838-453c40ba41dc" variableName="httpStatus" />
-				<error-handler-plugin:on-error doc:name="Process Error" doc:id="c70c2912-9aad-4fed-b719-65d6dfd79eeb" notFoundError="Resource not found" errorTypes="APP:BAD_REQUEST" errorCodes="#[vars.httpStatus]" errorMessages="Bad request"/>
+				<set-variable value="#[400]" doc:name="Set httpStatus" doc:id="d1939fa7-5e90-4973-8d2e-0478bb1d7ee0" variableName="httpStatus" />
+				<error-handler-plugin:on-error doc:name="Process Error" doc:id="dedf73eb-7766-463b-9862-934153b09f8e" notFoundError="Resource not found" errorTypes="APP:BAD_REQUEST" errorCodes="#[vars.httpStatus]" errorMessages="Bad request"/>
 			</on-error-propagate>
-			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="6c8fbd9c-7011-475d-b17a-f7a1fcdc051c" type="ANY">
-				<ee:transform doc:name="Transform Message" doc:id="509ada5e-f2cb-4294-9b76-5aa0e985cb0e">
-					<ee:message>
-					</ee:message>
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="cb68bab8-e99a-436b-b867-044fe6fc48d0" type="APP:SERVER" >
+				<ee:transform doc:name="Transform Message" doc:id="2d1f5672-b382-48b5-b98a-0915aa42d2ee" >
+					<ee:message />
+					<ee:variables >
+						<ee:set-variable variableName="errorDetails" ><![CDATA[%dw 2.0
+output application/java
+---
+error.muleMessage.typedValue.errorDetails default []]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+				<set-variable value="#[400]" doc:name="Set httpStatus" doc:id="90a008af-ae15-45e2-ab9c-2723e256a667" variableName="httpStatus" />
+				<error-handler-plugin:on-error doc:name="Process Error" doc:id="5d490707-9af8-4018-8875-2821231113ef" notFoundError="Resource not found" errorTypes="APP:SERVER" errorCodes="#[vars.httpStatus]" errorMessages='#[error.detailedDescription default " " replace "," with " "]' />
+			</on-error-propagate>
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="37e9c401-e9bd-4556-89a6-6325cbafd115" type="ANY">
+				<ee:transform doc:name="Transform Message" doc:id="30c8418f-66cf-48bd-86da-7ec7b3fb177d">
+					<ee:message />
 					<ee:variables>
 						<ee:set-variable variableName="errorDetails"><![CDATA[%dw 2.0
 output application/java
@@ -79,8 +91,8 @@ output application/java
 error.muleMessage.typedValue.errorDetails default []]]></ee:set-variable>
 					</ee:variables>
 				</ee:transform>
-				<error-handler-plugin:on-error doc:name="Process Error" doc:id="84bfc5d4-cf9b-4f6c-92be-cc28c48ce6a5" notFoundError="Resource not found" badRequestError="Request data contains errors" serverError="Server has thrown an error"/>
-				<set-variable value="#[payload.errorDetails[0].code as Number]" doc:name="Set httpStatus" doc:id="2bc8989f-85ee-4a79-9f71-f4ac6445dd75" variableName="httpStatus" />
+				<error-handler-plugin:on-error doc:name="Process Error" doc:id="e425e537-61ad-4690-9b17-e32f337b639c" badRequestError="#[error.description default &quot;There was an issue with your request message.&quot;]" unauthorizedError="#[error.description default &quot;You have issues accessing the system&quot;]" notFoundError="#[error.description default &quot;The API has not been implemented&quot;]" notAcceptableError="#[error.description default &quot;One of the request or parameters is unacceptable&quot;]" timeoutError="#[error.description default &quot;You request to the server has been timed-out&quot;]" unsupportedMediaTypeError="#[error.description default &quot;Media Type not supported&quot;]" tooManyRequestsError="#[error.description default &quot;You have made too many requests to the server&quot;]" serverError="#[error.description default &quot;There is a server issue&quot;]" methodNotAllowedError="#[error.description default &quot;The method has not been implemented&quot;]" connectivityError="#[error.description default &quot;You have issues accessing the system&quot;]" />
+				<set-variable value="#[payload.errorDetails[0].code as Number]" doc:name="Set httpStatus" doc:id="e42ed09f-d00e-46d0-afac-49d60b13b3f5" variableName="httpStatus" />
 			</on-error-propagate>
         </error-handler>
     </flow>
@@ -112,18 +124,18 @@ output application/json
         </error-handler>
     </flow>
     <flow name="get:\alive:mico-composite-order-sapi-config">
-        <flow-ref doc:name="getAlive" doc:id="f37e4cbe-0e3a-4bf4-8262-4bd00acc04d1" name="getAlive"/>
+		<flow-ref doc:name="Flow Reference" doc:id="26905921-a815-491e-8136-7316e0c92e67" name="getAlive"/>
     </flow>
     <flow name="get:\orders:mico-composite-order-sapi-config">
-		<flow-ref doc:name="getOrders" doc:id="fc976a5c-1455-44bd-a198-024af67b9941" name="getOrders"/>
+		<flow-ref doc:name="Flow Reference" doc:id="fa10add5-82d6-4c53-97d6-ec8490964092" name="getOrders"/>
     </flow>
     <flow name="get:\ready:mico-composite-order-sapi-config">
-		<flow-ref doc:name="getReady" doc:id="b007ae45-eb00-437f-9a75-f7c917eb41f6" name="getReady"/>
+		<flow-ref doc:name="Flow Reference" doc:id="8e12609a-fc44-4a6e-8588-8286b1731cbd" name="getReady"/>
     </flow>
-    <flow name="get:\orders\(salesforceId):mico-composite-order-sapi-config">
-		<flow-ref doc:name="getOrdersById" doc:id="3e7b69e0-d9ed-425f-8415-5b8e70968c6b" name="getOrdersById"/>
+    <flow name="get:\orders\(poNumber):mico-composite-order-sapi-config">
+		<flow-ref doc:name="Flow Reference" doc:id="f0f0e266-5fd1-4145-9f65-748b6eb94a23" name="getOrdersByPoNumber"/>
     </flow>
     <flow name="post:\orders:application\json:mico-composite-order-sapi-config">
-		<flow-ref doc:name="postOrders" doc:id="1f25bd3f-fc21-4665-82bc-9f90bd3eca5f" name="postOrders"/>
+		<flow-ref doc:name="Flow Reference" doc:id="a0f6437d-9e70-484b-975c-fd51768f687d" name="postOrders"/>
     </flow>
 </mule>
