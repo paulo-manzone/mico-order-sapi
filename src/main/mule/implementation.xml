@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:validation="http://www.mulesoft.org/schema/mule/validation" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
-	xmlns:salesforce-composite="http://www.mulesoft.org/schema/mule/salesforce-composite"
-	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+<mule xmlns:error-handler-plugin="http://www.mulesoft.org/schema/mule/error-handler-plugin" xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
+	xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns:salesforce-composite="http://www.mulesoft.org/schema/mule/salesforce-composite" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
 http://www.mulesoft.org/schema/mule/salesforce-composite http://www.mulesoft.org/schema/mule/salesforce-composite/current/mule-salesforce-composite.xsd
 http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
-http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd">
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd
+http://www.mulesoft.org/schema/mule/error-handler-plugin http://www.mulesoft.org/schema/mule/error-handler-plugin/current/mule-error-handler-plugin.xsd">
 	
 	
 	<flow name="postOrders" doc:id="330715d5-4129-406b-a445-fc883e0d68a1">
@@ -82,10 +83,10 @@ output application/json
 		<choice doc:name="Choice" doc:id="d6dfb8fb-2a0d-4b36-bc1e-add986019aa6" >
 			<when expression="#[payload[0].httpStatusCode != 201]">
 				<foreach doc:name="For Each" doc:id="baf4189c-6e19-4ad0-87eb-d4f6b391f3a0">
-			<validation:is-true doc:name="Duplicate value validation" doc:id="87e8f236-414f-4ca6-83ae-60e0a722feb3" config-ref="Validation_Config" expression="#[payload.body[0].errorCode != 'DUPLICATE_VALUE']">
+			<validation:is-true doc:name="Duplicate value validation" doc:id="87e8f236-414f-4ca6-83ae-60e0a722feb3" config-ref="Validation_Config" expression="#[payload.body[0].errorCode != 'DUPLICATE_VALUE']" message="Duplicate entry">
 				<error-mapping sourceType="VALIDATION:INVALID_BOOLEAN" targetType="APP:DUPLICATE_ENTRY" />
 			</validation:is-true>
-			<validation:is-true doc:name="MalformedId value validation" doc:id="d325f658-bb44-403b-bd43-c1793caca585" expression="#[payload.body[0].errorCode != 'MALFORMED_ID']">
+					<validation:is-true doc:name="MalformedId value validation" doc:id="d325f658-bb44-403b-bd43-c1793caca585" expression="#[payload.body[0].errorCode != 'MALFORMED_ID']" message="Malformed id">
 				<error-mapping sourceType="VALIDATION:INVALID_BOOLEAN" targetType="APP:MALFORMED_ID" />
 			</validation:is-true>
 		</foreach>
@@ -109,7 +110,7 @@ output application/json
 	"final": attributes.queryParams.'finalSubtotal' as Number
 }]]]></salesforce:parameters>
 		</salesforce:query>
-		<validation:is-not-empty-collection doc:name="Is not empty collection" doc:id="89d92a35-c463-49b8-a90c-7bb415c58af7" config-ref="Validation_Config" message="Get orders returned empty!">
+		<validation:is-not-empty-collection doc:name="Is not empty collection" doc:id="89d92a35-c463-49b8-a90c-7bb415c58af7" config-ref="Validation_Config" message="Get orders returned empty">
 			<error-mapping sourceType="VALIDATION:EMPTY_COLLECTION" targetType="APP:NOT_FOUND" />
 		</validation:is-not-empty-collection>
 		<ee:transform doc:name="Transform SF to Json" doc:id="5333642c-e476-4cdb-b60c-5f5f99e134a5" >
@@ -154,7 +155,7 @@ message.payload map (order, orderIndex) -> {
 	"id": attributes.uriParams.'salesforceId'
 }]]]></salesforce:parameters>
 		</salesforce:query>
-		<validation:is-not-empty-collection doc:name="Is not empty collection" doc:id="05e41219-3dbe-4154-9f8d-923c44ce5f39" config-ref="Validation_Config" message="Get orders returned empty!" >
+		<validation:is-not-empty-collection doc:name="Is not empty collection" doc:id="05e41219-3dbe-4154-9f8d-923c44ce5f39" config-ref="Validation_Config" message="Get orders returned empty" >
 			<error-mapping sourceType="VALIDATION:EMPTY_COLLECTION" targetType="APP:NOT_FOUND" />
 		</validation:is-not-empty-collection>
 		<ee:transform doc:name="Transform SF to Json" doc:id="35109077-20b0-4f02-87ce-f39609f3e8b6" >

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
-http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+<mule xmlns:error-handler-plugin="http://www.mulesoft.org/schema/mule/error-handler-plugin" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/error-handler-plugin http://www.mulesoft.org/schema/mule/error-handler-plugin/current/mule-error-handler-plugin.xsd">
     <flow name="mico-composite-order-sapi-main">
         <http:listener config-ref="mico-composite-order-sapi-httpListenerConfig" path="/api/${api.majorVersion}/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
@@ -13,166 +14,73 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
         </http:listener>
 		<apikit:router config-ref="mico-composite-order-sapi-config" />
         <error-handler>
-            <on-error-propagate type="APIKIT:BAD_REQUEST, APP:BAD_REQUEST" enableNotifications="true" logException="true">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-                    <ee:message>
-                        <ee:set-payload><![CDATA[%dw 2.0
-output application/json
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="2cb5a250-f1e2-4931-b237-f1703b371183" type="APP:NOT_FOUND">
+				<ee:transform doc:name="Transform Message" doc:id="08a268b9-d73f-472e-993f-069ea57ec7e3">
+					<ee:message />
+					<ee:variables>
+						<ee:set-variable variableName="errorDetails"><![CDATA[%dw 2.0
+output application/java
 ---
-{
-	errorMessage: "Bad request!",
-	description: error.description
-}]]></ee:set-payload>
-                    </ee:message>
-                    <ee:variables>
-                        <ee:set-variable variableName="httpStatus"><![CDATA[400]]></ee:set-variable>
-                    </ee:variables>
-                </ee:transform>
-            </on-error-propagate>
-            <on-error-propagate type="APIKIT:NOT_FOUND">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-                    <ee:message>
-                        <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{
-	message: "Resource not found",
-	description: error.description
-}]]></ee:set-payload>
-                    </ee:message>
-                    <ee:variables>
-                        <ee:set-variable variableName="httpStatus"><![CDATA[404]]></ee:set-variable>
-                    </ee:variables>
-                </ee:transform>
-            </on-error-propagate>
-            <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-                    <ee:message>
-                        <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{
-	message: "Method not allowed",
-	description: error.description
-}]]></ee:set-payload>
-                    </ee:message>
-                    <ee:variables>
-                        <ee:set-variable variableName="httpStatus"><![CDATA[405]]></ee:set-variable>
-                    </ee:variables>
-                </ee:transform>
-            </on-error-propagate>
-            <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-                    <ee:message>
-                        <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{
-	message: "Not acceptable",
-	description: error.description
-}]]></ee:set-payload>
-                    </ee:message>
-                    <ee:variables>
-                        <ee:set-variable variableName="httpStatus"><![CDATA[406]]></ee:set-variable>
-                    </ee:variables>
-                </ee:transform>
-            </on-error-propagate>
-            <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-                    <ee:message>
-                        <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{
-	message: "Unsupported media type",
-	description: error.description
-}]]></ee:set-payload>
-                    </ee:message>
-                    <ee:variables>
-                        <ee:set-variable variableName="httpStatus"><![CDATA[415]]></ee:set-variable>
-                    </ee:variables>
-                </ee:transform>
-            </on-error-propagate>
-            <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-                    <ee:message>
-                        <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{
-	errorMessage: "Not Implemented",
-	description: error.description
-}]]></ee:set-payload>
-                    </ee:message>
-                    <ee:variables>
-                        <ee:set-variable variableName="httpStatus"><![CDATA[501]]></ee:set-variable>
-                    </ee:variables>
-                </ee:transform>
-            </on-error-propagate>
-			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="2611a09e-c57f-412b-805f-6fcd868a8c5b" type="HTTP:INTERNAL_SERVER_ERROR, APP:SERVER" >
-				<ee:transform doc:name="Transform Message" doc:id="a88ba4f5-70a0-435a-b382-11b52255b0e6" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" >
-					<ee:message >
-						<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
----
-{
-	errorMessage: "Server side error!",
-	description: error.description
-}]]></ee:set-payload>
-					</ee:message>
-					<ee:variables >
-						<ee:set-variable variableName="httpStatus" ><![CDATA[500]]></ee:set-variable>
+error.muleMessage.typedValue.errorDetails default []]]></ee:set-variable>
 					</ee:variables>
 				</ee:transform>
+				<set-variable value="404" doc:name="Set httpStatus" doc:id="53a305ec-2566-4fd7-ab7d-b758520b6079" variableName="httpStatus" />
+				<error-handler-plugin:on-error doc:name="Process Error" doc:id="7074e6a3-d1de-47b8-8f9f-320482814c82" notFoundError="Order not found" errorTypes="APP:NOT_FOUND" errorCodes="#[vars.httpStatus]" errorMessages='#[error.detailedDescription default " " replace "," with " "]' />
 			</on-error-propagate>
-			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="ac05bde7-5873-4f02-b934-addce0fe0851" type="APP:DUPLICATE_ENTRY" >
-				<ee:transform doc:name="Transform Message" doc:id="3444eb71-1824-4e36-8ff4-23998cc9f88f" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" >
-					<ee:message >
-						<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
+			
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="7b25a29c-b97f-43da-a9aa-286fa4f0f815" type="APP:DUPLICATE_ENTRY">
+				<ee:transform doc:name="Transform Message" doc:id="9197aa3b-c2f1-4083-8cdb-66193144eb90">
+					<ee:message />
+					<ee:variables>
+						<ee:set-variable variableName="errorDetails"><![CDATA[%dw 2.0
+output application/java
 ---
-{
-	errorMessage: "Conflict!",
-	description: "Duplicate Entry!"
-}]]></ee:set-payload>
-					</ee:message>
-					<ee:variables >
-						<ee:set-variable variableName="httpStatus" ><![CDATA[409]]></ee:set-variable>
+error.muleMessage.typedValue.errorDetails default []]]></ee:set-variable>
 					</ee:variables>
 				</ee:transform>
+				<set-variable value="409" doc:name="Set httpStatus" doc:id="b3287b37-3729-4842-9171-9919fde84c6b" variableName="httpStatus" />
+				<error-handler-plugin:on-error doc:name="Process Error" doc:id="0fabc59c-f7b1-428f-992a-9f9e2574f5af" notFoundError="Resource not found" errorTypes="APP:DUPLICATE_ENTRY" errorCodes="#[vars.httpStatus]" errorMessages='#[error.detailedDescription default " " replace "," with " "]'/>
 			</on-error-propagate>
-			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="2a4c89fc-19f0-4a52-ae94-de384b5598b6" type="APP:MALFORMED_ID" >
-				<ee:transform doc:name="Transform Message" doc:id="8cd6f289-bd84-4871-aef0-1e48de2b617d" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" >
-					<ee:message >
-						<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
----
-{
-	errorMessage: "Conflict!",
-	description: "Malformed Id!"
-}]]></ee:set-payload>
-					</ee:message>
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="c8efd90b-5ef3-4853-a59c-dd8ceb2d30d7" type="APP:MALFORMED_ID">
+				<ee:transform doc:name="Transform Message" doc:id="bc23a6d3-01f0-4f5c-badc-97e9042dfac1" >
+					<ee:message />
 					<ee:variables >
-						<ee:set-variable variableName="httpStatus" ><![CDATA[409]]></ee:set-variable>
+						<ee:set-variable variableName="errorDetails" ><![CDATA[%dw 2.0
+output application/java
+---
+error.muleMessage.typedValue.errorDetails default []]]></ee:set-variable>
 					</ee:variables>
 				</ee:transform>
+				<set-variable value="409" doc:name="Set httpStatus" doc:id="319c5c29-7498-4ec3-bfad-30cf0833dbc1" variableName="httpStatus" />
+				<error-handler-plugin:on-error doc:name="Process Error" doc:id="ad1306b7-20ec-44e6-9631-68d2cd2ae3fe" notFoundError="Resource not found" errorTypes="APP:MALFORMED_ID" errorCodes="#[vars.httpStatus]" errorMessages='#[error.detailedDescription default " " replace "," with " "]' />
 			</on-error-propagate>
-			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="f0697de2-629b-4c17-9ff8-6b22a4c0371e" type="APP:NOT_FOUND">
-				<ee:transform doc:name="Transform Message" doc:id="93a5cef2-db93-42ac-ac07-27b0de9b3db2" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+			
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="739b981a-6364-4f13-a1c4-807ed4eae292" type="APP:BAD_REQUEST">
+				<ee:transform doc:name="Transform Message" doc:id="9677274f-e45b-4a8a-a49c-36b5c53e1780">
+					<ee:message />
+					<ee:variables>
+						<ee:set-variable variableName="errorDetails"><![CDATA[%dw 2.0
+output application/java
+---
+error.muleMessage.typedValue.errorDetails default []]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+				<set-variable value="#[400]" doc:name="Set httpStatus" doc:id="ae6fa72b-1b84-430a-9838-453c40ba41dc" variableName="httpStatus" />
+				<error-handler-plugin:on-error doc:name="Process Error" doc:id="c70c2912-9aad-4fed-b719-65d6dfd79eeb" notFoundError="Resource not found" errorTypes="APP:BAD_REQUEST" errorCodes="#[vars.httpStatus]" errorMessages="Bad request"/>
+			</on-error-propagate>
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="6c8fbd9c-7011-475d-b17a-f7a1fcdc051c" type="ANY">
+				<ee:transform doc:name="Transform Message" doc:id="509ada5e-f2cb-4294-9b76-5aa0e985cb0e">
 					<ee:message>
-						<ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{
-	errorMessage: "Orders not found!",
-	description: error.description
-}
-]]></ee:set-payload>
 					</ee:message>
 					<ee:variables>
-						<ee:set-variable variableName="httpStatus"><![CDATA[404]]></ee:set-variable>
+						<ee:set-variable variableName="errorDetails"><![CDATA[%dw 2.0
+output application/java
+---
+error.muleMessage.typedValue.errorDetails default []]]></ee:set-variable>
 					</ee:variables>
 				</ee:transform>
+				<error-handler-plugin:on-error doc:name="Process Error" doc:id="84bfc5d4-cf9b-4f6c-92be-cc28c48ce6a5" notFoundError="Resource not found" badRequestError="Request data contains errors" serverError="Server has thrown an error"/>
+				<set-variable value="#[payload.errorDetails[0].code as Number]" doc:name="Set httpStatus" doc:id="2bc8989f-85ee-4a79-9f71-f4ac6445dd75" variableName="httpStatus" />
 			</on-error-propagate>
         </error-handler>
     </flow>
