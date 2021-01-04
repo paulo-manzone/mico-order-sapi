@@ -92,7 +92,7 @@ error.muleMessage.typedValue.errorDetails default []]]></ee:set-variable>
 					</ee:variables>
 				</ee:transform>
 				<error-handler-plugin:on-error doc:name="Process Error" doc:id="e425e537-61ad-4690-9b17-e32f337b639c" badRequestError="#[error.description default &quot;There was an issue with your request message.&quot;]" unauthorizedError="#[error.description default &quot;You have issues accessing the system&quot;]" notFoundError="#[error.description default &quot;The API has not been implemented&quot;]" notAcceptableError="#[error.description default &quot;One of the request or parameters is unacceptable&quot;]" timeoutError="#[error.description default &quot;You request to the server has been timed-out&quot;]" unsupportedMediaTypeError="#[error.description default &quot;Media Type not supported&quot;]" tooManyRequestsError="#[error.description default &quot;You have made too many requests to the server&quot;]" serverError="#[error.description default &quot;There is a server issue&quot;]" methodNotAllowedError="#[error.description default &quot;The method has not been implemented&quot;]" connectivityError="#[error.description default &quot;You have issues accessing the system&quot;]" />
-				<set-variable value="#[payload.errorDetails[0].code as Number]" doc:name="Set httpStatus" doc:id="e42ed09f-d00e-46d0-afac-49d60b13b3f5" variableName="httpStatus" />
+				<set-variable value="#[attributes.httpStatus]" doc:name="Set httpStatus" doc:id="e42ed09f-d00e-46d0-afac-49d60b13b3f5" variableName="httpStatus" />
 			</on-error-propagate>
         </error-handler>
     </flow>
