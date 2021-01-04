@@ -28,7 +28,7 @@ error.muleMessage.typedValue.errorDetails default []]]></ee:set-variable>
 				<error-handler-plugin:on-error doc:name="Process Error" doc:id="4cc2d578-fb6f-46c1-81f4-6dea218e4660" notFoundError="Order not found" errorTypes="APP:NOT_FOUND" errorCodes="#[vars.httpStatus]" errorMessages='#[error.detailedDescription default " " replace "," with " "]' />
 			</on-error-propagate>
 			
-			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="2151cec9-a01a-4914-8503-f17eb887c70a" type="APP:DUPLICATE_ENTRY">
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="2151cec9-a01a-4914-8503-f17eb887c70a" type="APP:DUPLICATE_VALUE">
 				<ee:transform doc:name="Transform Message" doc:id="71a2925b-a757-4386-b1a5-f29a5df0bac1">
 					<ee:message />
 					<ee:variables>
@@ -39,7 +39,7 @@ error.muleMessage.typedValue.errorDetails default []]]></ee:set-variable>
 					</ee:variables>
 				</ee:transform>
 				<set-variable value="409" doc:name="Set httpStatus" doc:id="b5cba67e-bcf6-4cc4-a949-c0a3f17e1754" variableName="httpStatus" />
-				<error-handler-plugin:on-error doc:name="Process Error" doc:id="653b6c3f-c13a-4896-847b-4cc8ff455ff5" notFoundError="Resource not found" errorTypes="APP:DUPLICATE_ENTRY" errorCodes="#[vars.httpStatus]" errorMessages='#[error.detailedDescription default " " replace "," with " "]'/>
+				<error-handler-plugin:on-error doc:name="Process Error" doc:id="653b6c3f-c13a-4896-847b-4cc8ff455ff5" notFoundError="Resource not found" errorTypes="APP:CONFLICT" errorCodes="#[vars.httpStatus]" errorMessages='#[error.detailedDescription default " " replace "," with " "]'/>
 			</on-error-propagate>
 			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="9042f99a-7203-4896-b3d8-e98e4beb4230" type="APP:MALFORMED_ID">
 				<ee:transform doc:name="Transform Message" doc:id="d9cff896-cfe7-4147-ab61-e76210794f1a" >
@@ -66,7 +66,7 @@ error.muleMessage.typedValue.errorDetails default []]]></ee:set-variable>
 					</ee:variables>
 				</ee:transform>
 				<set-variable value="#[400]" doc:name="Set httpStatus" doc:id="d1939fa7-5e90-4973-8d2e-0478bb1d7ee0" variableName="httpStatus" />
-				<error-handler-plugin:on-error doc:name="Process Error" doc:id="dedf73eb-7766-463b-9862-934153b09f8e" notFoundError="Resource not found" errorTypes="APP:BAD_REQUEST" errorCodes="#[vars.httpStatus]" errorMessages="Bad request"/>
+				<error-handler-plugin:on-error doc:name="Process Error" doc:id="dedf73eb-7766-463b-9862-934153b09f8e" notFoundError="Resource not found" errorTypes="APP:BAD_REQUEST" errorCodes="#[vars.httpStatus]" errorMessages='error.detailedDescription default " " replace "," with " "'/>
 			</on-error-propagate>
 			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="cb68bab8-e99a-436b-b867-044fe6fc48d0" type="APP:SERVER" >
 				<ee:transform doc:name="Transform Message" doc:id="2d1f5672-b382-48b5-b98a-0915aa42d2ee" >

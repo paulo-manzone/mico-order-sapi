@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="implementation-test-suite.xml" />
+	<munit:test name="implementation-test-suite-validatePostTest" doc:id="3e4a7bfb-4b6e-4d30-9ae8-3dc69ff3dce3" description="Test 201">
+		<munit:behavior >
+			<set-payload value="#[[{httpStatusCode: 201}]]" doc:name="Set Payload" doc:id="ce6e7941-6816-4ebe-b6d9-526d8cf9cb20" />
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to validatePost" doc:id="160e11f0-3ddd-4c48-9a5d-bb22cdcc91a8" name="validatePost"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that Payload is not modified" doc:id="42372736-406e-4335-883b-4e528c5657fb" expression="#[payload]" is="#[MunitTools::equalTo([{httpStatusCode: 201}])]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="implementation-test-suiteTest" doc:id="288db6a1-a679-476b-9447-9e82069d3171" description="Test 409" expectedErrorType="APP:DUPLICATE_VALUE">
+		<munit:behavior>
+			<set-payload value='#[output application/json
+---
+[{"httpStatusCode":"400","body":[{"errorCode":"DUPLICATE_VALUE"}]}]]' doc:name="Set Payload" doc:id="d255ec24-b75d-40f0-8975-08eb95d9e829" />
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to validatePost" doc:id="3d1903f4-96f1-4e62-8337-b08a081c4b49" name="validatePost" />
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:assert-that doc:name="Assert That Status Code is 409" doc:id="59e031c2-77c0-41d9-8638-be7eb89788ed" message="The HTTP Status code is not correct!" expression="#[attributes.statusCode]" is="#[MunitTools::equalTo(409)]" />
+		</munit:validation>
+	</munit:test>
+
+
+</mule>
