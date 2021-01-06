@@ -90,7 +90,7 @@ output application/json
 				<error-mapping sourceType="VALIDATION:INVALID_BOOLEAN" targetType="APP:MALFORMED_ID" />
 			</validation:is-true>
 		</foreach>
-				<raise-error doc:name="Raise error" doc:id="9d68f32c-a5c2-43d9-88a3-9d17a9380687" type="APP:BAD_REQUEST"/>
+				<raise-error doc:name="Raise error" doc:id="9d68f32c-a5c2-43d9-88a3-9d17a9380687" type="APP:BAD_REQUEST" description="Not treated error"/>
 			</when>
 		</choice>
 	</sub-flow>

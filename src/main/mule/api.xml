@@ -39,7 +39,7 @@ error.muleMessage.typedValue.errorDetails default []]]></ee:set-variable>
 					</ee:variables>
 				</ee:transform>
 				<set-variable value="409" doc:name="Set httpStatus" doc:id="b5cba67e-bcf6-4cc4-a949-c0a3f17e1754" variableName="httpStatus" />
-				<error-handler-plugin:on-error doc:name="Process Error" doc:id="653b6c3f-c13a-4896-847b-4cc8ff455ff5" notFoundError="Resource not found" errorTypes="APP:CONFLICT" errorCodes="#[vars.httpStatus]" errorMessages='#[error.detailedDescription default " " replace "," with " "]'/>
+				<error-handler-plugin:on-error doc:name="Process Error" doc:id="653b6c3f-c13a-4896-847b-4cc8ff455ff5" notFoundError="Resource not found" errorTypes="APP:DUPLICATE_VALUE" errorCodes="#[vars.httpStatus]" errorMessages='#[error.detailedDescription default " " replace "," with " "]'/>
 			</on-error-propagate>
 			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="9042f99a-7203-4896-b3d8-e98e4beb4230" type="APP:MALFORMED_ID">
 				<ee:transform doc:name="Transform Message" doc:id="d9cff896-cfe7-4147-ab61-e76210794f1a" >
