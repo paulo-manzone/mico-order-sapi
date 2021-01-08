@@ -80,7 +80,7 @@ http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/sc
 		doc:name="Secure Properties Config"
 		doc:id="d6b1d73f-c1b5-4255-a02d-6e078eb97eaa"
 		file="secure-properties-${env}.yaml"
-		key="${encrypt-key}">
+		key="${encrypt.key}">
 		<secure-properties:encrypt algorithm="Blowfish" />
 	</secure-properties:config>
 	<configuration-properties doc:name="Configuration properties" doc:id="844023f6-bd2b-4023-93f7-61202d052f5d" file="properties.yaml" />
