@@ -1,4 +1,14 @@
 {
-	"errorMessage":"Bad request!",
-	"description":"expected type: JSONObject, found: Null"
+    "success": false,
+    "apiName": "mico-order-eapi",
+    "version": "1.0.11",
+    "correlationId": "f1be73b0-5048-11eb-97b9-0005166836eb",
+    "timestamp": "2021-01-06T14:59:38.923-03:00",
+    "errorDetails": [
+        {
+            "code": 400,
+            "message": "/orderData required key [poNumber] not found",
+            "additionalInfo": "Bad Request : /orderData required key [poNumber] not found"
+        }
+    ]
 }
