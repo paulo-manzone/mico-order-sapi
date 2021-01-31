@@ -1,16 +1,22 @@
 pipeline {
-    agent any 
-
+    agent any
+    options {
+    	ansiColor('xterm')  
+  	}
+    environment {
+    	AP_CLIENT_ID = credentials('ap.client_id')
+    	AP_CLIENT_SECRET = credentials('ap.client_secret')
+    	ENCRYPT_KEY = credentials('encrypt-key')
+    }
     stages {
         stage('Build') {
         	steps {
-                bat 'mvn clean install -Dencrypt-key=senha123'
+                bat 'mvn clean install -Dencrypt.key=${ENCRYPT_KEY}'
             }
         }
         stage('Deploy to CloudHub') {
         	steps {
-                bat 'mvn package deploy -DmuleDeploy -Dap.client_id=4563c4fe43a84132b283442580d88a7b -Dap.client_secret=F7074D23B5F14571BB5F483F90058b5c -Dencrypt-key=senha123'
-            }
+                bat 'mvn mule:deploy -DmuleDeploy -Dmule.artifact=./target/composite-order-sapi-1.0.14-mule-application.jar -Dap.client_id=${AP_CLIENT_ID} -Dap.client_secret=${AP_CLIENT_SECRET} -Dencrypt-key=${ENCRYPT_KEY}'
+            }	
         }
    	}
-}    
