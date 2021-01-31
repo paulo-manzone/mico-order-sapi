@@ -11,7 +11,7 @@ pipeline {
     stages {
         stage('Build') {
         	steps {
-                bat 'mvn clean install -Dencrypt.key=${ENCRYPT_KEY}'
+                bat 'mvn clean install -Dencrypt-key=${ENCRYPT_KEY}'
             }
         }
         stage('Deploy to CloudHub') {
