@@ -364,7 +364,7 @@ payload must [
  ---
 payload must [
 	$.success must equalTo(false),
-	$.errorDetails[0].code must equalTo('404')
+	$.errorDetails[0].code must equalTo(404)
 ]]]]></munit-tools:that>
 			</munit-tools:assert>
 		</munit:validation>
@@ -642,7 +642,7 @@ payload must [
  ---
 payload must [
 	$.success must equalTo(false),
-	$.errorDetails[0].code must equalTo('404')
+	$.errorDetails[0].code must equalTo(404)
 ]]]]></munit-tools:that>
 			</munit-tools:assert>
 		</munit:validation>
